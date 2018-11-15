@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Henry Tsayukov](https://up.htmlacademy.ru/javascript/16/user/810549).
-* Наставник: `Неизвестно`.
+* Наставник: [Денис Байдаров](https://htmlacademy.ru/profile/4er).
 
 ---
 
