@@ -1,8 +1,25 @@
 'use strict';
 
+// Количество генерируемых объектов
+var OBJECTS_QUANTITY = 8;
+
 // Размеры Метки
 var PIN_WIDTH = 50;
 var PIN_HEIGHT = 70;
+
+// Размер контейнера меток
+var HEIGHT_MIN = 130;
+var HEIGHT_MAX = 630;
+var WIDTH_MAX = document.body.offsetWidth;
+
+// Параметры
+var PRICE_MIN = 1000;
+var PRICE_MAX = 1000000;
+var ROOMS_MIN = 1;
+var ROOMS_MAX = 6;
+var GUESTS_MIN = 1;
+var GUESTS_MAX = 50;
+
 
 var objects = [];
 var offers = {
@@ -83,36 +100,43 @@ var removeChildren = function (parent) {
 // Функция создания объекта.
 // Принимает ссылку на аватарку и заголовок.
 // Возвращает объект с 3 объектами: author, location, offer
+
 var makeObject = function (avatar, title) {
-  var object = {};
+  var locationX = getRandom(0, WIDTH_MAX);
+  var locationY = getRandom(HEIGHT_MIN, HEIGHT_MAX);
 
-  object.author = {};
-  object.author.avatar = avatar;
+  var object = {
+    author: {
+      avatar: avatar
+    },
 
-  object.location = {};
-  object.location.x = getRandom(0, document.body.offsetWidth);
-  object.location.y = getRandom(130, 630);
+    location: {
+      x: locationX,
+      y: locationY
+    },
 
-  object.offer = {};
-  object.offer.title = title;
-  object.offer.address = object.location.x + ',' + object.location.y;
-  object.offer.price = getRandom(1000, 1000000);
-  object.offer.type = getRandomElement(offers.types);
-  object.offer.rooms = getRandom(1, 6);
-  object.offer.guests = getRandom(0, 16);
-  object.offer.checkin = getRandomElement(offers.times);
-  object.offer.checkout = getRandomElement(offers.times);
-  // Случайная длина массива строк от 1 до длины исходного массива
-  object.offer.features = offers.features.slice(0, getRandom(1, offers.features.length));
-  object.offer.description = '';
-  object.offer.photos = offers.photos.slice();
+    offer: {
+      title: title,
+      address: locationX + ',' + locationY,
+      price: getRandom(PRICE_MIN, PRICE_MAX),
+      type: getRandomElement(offers.types),
+      rooms: getRandom(ROOMS_MIN, ROOMS_MAX),
+      guests: getRandom(GUESTS_MIN, GUESTS_MAX),
+      checkin: getRandomElement(offers.times),
+      checkout: getRandomElement(offers.times),
+      // Случайная длина массива строк от 1 до длины исходного массива
+      features: offers.features.slice(0, getRandom(1, offers.features.length)),
+      description: '',
+      photos: offers.photos.slice()
+    }
+  };
 
   return object;
 };
 
 // Цикл, формирует массив объектов
 // созданных с помощью функции создания объекта
-for (var i = 0; i < 8; i++) {
+for (var i = 0; i < OBJECTS_QUANTITY; i++) {
   var avatarLink = 'img/avatars/user0' + (i + 1) + '.png';
   var offerTitle = offers.titles[i];
   objects.push(makeObject(avatarLink, offerTitle));
