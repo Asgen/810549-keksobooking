@@ -161,17 +161,17 @@ var makeObject = function (avatar, title) {
 // Функция отрисовки Меток на карте
 // На входе: массив объектов, куда вставлять метки,
 // Id шабона, класс элемента для коп-ия
-var renderPins = function (dataArr, targetList, tamplateId, tamplateClass) {
+var renderPins = function (dataArr, targetList, templateId, templateClass) {
   // Куда вставлять Метки
   var pinListElement = document.querySelector(targetList);
   // Переменная для хранения Метки из шаблона
-  var pinTamplate = document.querySelector(tamplateId)
+  var pinTemplate = document.querySelector(templateId)
     .content
-    .querySelector(tamplateClass);
+    .querySelector(templateClass);
   // Отрисовка Меток на карте
   var fragmentPins = document.createDocumentFragment();
   for (var i = 0; i < dataArr.length; i++) {
-    var pinElement = pinTamplate.cloneNode(true);
+    var pinElement = pinTemplate.cloneNode(true);
     var pinPositionX = (dataArr[i].location.x <= PIN_WIDTH) ? dataArr[i].location.x : dataArr[i].location.x - PIN_WIDTH;
     var pinPositionY = (dataArr[i].location.y <= PIN_HEIGHT) ? dataArr[i].location.y : dataArr[i].location.y - PIN_HEIGHT;
     pinElement.style.left = pinPositionX + 'px';
@@ -186,27 +186,27 @@ var renderPins = function (dataArr, targetList, tamplateId, tamplateClass) {
 
 // Функция отрисовки карточки
 // возвращает карточку
-var renderCard = function (tamplateId, tamplateClass, dataArr) {
-  var cardTamplate = document.querySelector(tamplateId)
+var renderCard = function (templateId, templateClass, dataElement) {
+  var cardTemplate = document.querySelector(templateId)
     .content
-    .querySelector(tamplateClass);
-  var cardElement = cardTamplate.cloneNode(true);
+    .querySelector(templateClass);
+  var cardElement = cardTemplate.cloneNode(true);
 
-  addTextContent(cardElement, '.popup__title', dataArr[0].offer.title);
-  addTextContent(cardElement, '.popup__text--address', dataArr[0].offer.address);
-  addTextContent(cardElement, '.popup__text--price', dataArr[0].offer.price + ' ₽/ночь');
-  addTextContent(cardElement, '.popup__text--capacity', dataArr[0].offer.rooms + ' комнаты для ' + dataArr[0].offer.guests + ' гостей');
-  addTextContent(cardElement, '.popup__text--time', 'Заезд после ' + dataArr[0].offer.checkin + ', выезд до ' + dataArr[0].offer.checkout);
-  addTextContent(cardElement, '.popup__description', dataArr[0].offer.description);
+  addTextContent(cardElement, '.popup__title', dataElement.offer.title);
+  addTextContent(cardElement, '.popup__text--address', dataElement.offer.address);
+  addTextContent(cardElement, '.popup__text--price', dataElement.offer.price + ' ₽/ночь');
+  addTextContent(cardElement, '.popup__text--capacity', dataElement.offer.rooms + ' комнаты для ' + dataElement.offer.guests + ' гостей');
+  addTextContent(cardElement, '.popup__text--time', 'Заезд после ' + dataElement.offer.checkin + ', выезд до ' + dataElement.offer.checkout);
+  addTextContent(cardElement, '.popup__description', dataElement.offer.description);
 
   var cardType = cardElement.querySelector('.popup__type');
-  cardType.textContent = cardTypeTranslated[dataArr[0].offer.type];
+  cardType.textContent = cardTypeTranslated[dataElement.offer.type];
 
   var cardFeatures = cardElement.querySelector('.popup__features');
   removeChildren(cardFeatures);
-  for (i = 0; i < dataArr[0].offer.features.length; i++) {
+  for (i = 0; i < dataElement.offer.features.length; i++) {
     var cardFeature = makeElement('li', 'popup__feature');
-    var cardFeatureMod = 'popup__feature--' + dataArr[0].offer.features[i];
+    var cardFeatureMod = 'popup__feature--' + dataElement.offer.features[i];
     cardFeature.classList.add(cardFeatureMod);
 
     cardFeatures.appendChild(cardFeature);
@@ -214,17 +214,17 @@ var renderCard = function (tamplateId, tamplateClass, dataArr) {
 
   var cardPhotos = cardElement.querySelector('.popup__photos');
   removeChildren(cardPhotos);
-  for (i = 0; i < dataArr[0].offer.photos.length; i++) {
+  for (i = 0; i < dataElement.offer.photos.length; i++) {
     var cardPhoto = makeElement('img', 'popup__photo');
     cardPhoto.width = CARD_PIC_WIDTH;
     cardPhoto.height = CARD_PIC_HEIGHT;
-    cardPhoto.src = dataArr[0].offer.photos[i];
+    cardPhoto.src = dataElement.offer.photos[i];
 
     cardPhotos.appendChild(cardPhoto);
   }
 
   var cardAvatar = cardElement.querySelector('.popup__avatar');
-  cardAvatar.src = dataArr[0].author.avatar;
+  cardAvatar.src = dataElement.author.avatar;
 
   return cardElement;
 };
@@ -245,7 +245,7 @@ map.classList.remove('map--faded');
 renderPins(objects, '.map__pins', '#pin', '.map__pin');
 
 // Отрисовка Карточки
-var cardElement = renderCard('#card', '.map__card', objects);
+var cardElement = renderCard('#card', '.map__card', objects[0]);
 // Перед чем вставлять Карточку (в map)
 var mapFilters = document.querySelector('.map__filters-container');
 
