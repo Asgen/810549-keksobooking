@@ -20,6 +20,10 @@ var ROOMS_MAX = 6;
 var GUESTS_MIN = 1;
 var GUESTS_MAX = 50;
 
+// Размеры фото в карточке
+var CARD_PIC_WIDTH = 45;
+var CARD_PIC_HEIGHT = 40;
+
 
 var objects = [];
 var offers = {
@@ -63,6 +67,27 @@ var offers = {
   ]
 };
 
+// Мапа для типа жилья отрисованной карточки
+var cardTypeTranslated = {
+  'palace': 'Дворец',
+  'flat': 'Квартира',
+  'house': 'Дом',
+  'bungalo': 'Бунгало'
+};
+
+// Функция перемешивания массива
+var shuffleArr = function shuffle(arr) {
+  var j;
+  var temp;
+  for (var i = arr.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1));
+    temp = arr[j];
+    arr[j] = arr[i];
+    arr[i] = temp;
+  }
+  return arr;
+};
+
 // Функция получения случайного числа от min до max
 var getRandom = function (min, max) {
   return Math.floor(Math.random() * (max - min) + min);
@@ -100,7 +125,6 @@ var removeChildren = function (parent) {
 // Функция создания объекта.
 // Принимает ссылку на аватарку и заголовок.
 // Возвращает объект с 3 объектами: author, location, offer
-
 var makeObject = function (avatar, title) {
   var locationX = getRandom(0, WIDTH_MAX);
   var locationY = getRandom(HEIGHT_MIN, HEIGHT_MAX);
@@ -127,11 +151,82 @@ var makeObject = function (avatar, title) {
       // Случайная длина массива строк от 1 до длины исходного массива
       features: offers.features.slice(0, getRandom(1, offers.features.length)),
       description: '',
-      photos: offers.photos.slice()
+      photos: shuffleArr(offers.photos)
     }
   };
 
   return object;
+};
+
+// Функция отрисовки Меток на карте
+// На входе: массив объектов, куда вставлять метки,
+// Id шабона, класс элемента для коп-ия
+var renderPins = function (dataArr, targetList, tamplateId, tamplateClass) {
+  // Куда вставлять Метки
+  var pinListElement = document.querySelector(targetList);
+  // Переменная для хранения Метки из шаблона
+  var pinTamplate = document.querySelector(tamplateId)
+    .content
+    .querySelector(tamplateClass);
+  // Отрисовка Меток на карте
+  var fragmentPins = document.createDocumentFragment();
+  for (var i = 0; i < dataArr.length; i++) {
+    var pinElement = pinTamplate.cloneNode(true);
+    var pinPositionX = (dataArr[i].location.x <= PIN_WIDTH) ? dataArr[i].location.x : dataArr[i].location.x - PIN_WIDTH;
+    var pinPositionY = (dataArr[i].location.y <= PIN_HEIGHT) ? dataArr[i].location.y : dataArr[i].location.y - PIN_HEIGHT;
+    pinElement.style.left = pinPositionX + 'px';
+    pinElement.style.top = pinPositionY + 'px';
+    var pinAvatar = pinElement.firstChild;
+    pinAvatar.src = dataArr[i].author.avatar;
+    fragmentPins.appendChild(pinElement);
+  }
+  // Добавляет фрагмент с метками в список меток
+  pinListElement.appendChild(fragmentPins);
+};
+
+// Функция отрисовки карточки
+// возвращает карточку
+var renderCard = function (tamplateId, tamplateClass, dataArr) {
+  var cardTamplate = document.querySelector(tamplateId)
+    .content
+    .querySelector(tamplateClass);
+  var cardElement = cardTamplate.cloneNode(true);
+
+  addTextContent(cardElement, '.popup__title', dataArr[0].offer.title);
+  addTextContent(cardElement, '.popup__text--address', dataArr[0].offer.address);
+  addTextContent(cardElement, '.popup__text--price', dataArr[0].offer.price + ' ₽/ночь');
+  addTextContent(cardElement, '.popup__text--capacity', dataArr[0].offer.rooms + ' комнаты для ' + dataArr[0].offer.guests + ' гостей');
+  addTextContent(cardElement, '.popup__text--time', 'Заезд после ' + dataArr[0].offer.checkin + ', выезд до ' + dataArr[0].offer.checkout);
+  addTextContent(cardElement, '.popup__description', dataArr[0].offer.description);
+
+  var cardType = cardElement.querySelector('.popup__type');
+  cardType.textContent = cardTypeTranslated[dataArr[0].offer.type];
+
+  var cardFeatures = cardElement.querySelector('.popup__features');
+  removeChildren(cardFeatures);
+  for (i = 0; i < dataArr[0].offer.features.length; i++) {
+    var cardFeature = makeElement('li', 'popup__feature');
+    var cardFeatureMod = 'popup__feature--' + dataArr[0].offer.features[i];
+    cardFeature.classList.add(cardFeatureMod);
+
+    cardFeatures.appendChild(cardFeature);
+  }
+
+  var cardPhotos = cardElement.querySelector('.popup__photos');
+  removeChildren(cardPhotos);
+  for (i = 0; i < dataArr[0].offer.photos.length; i++) {
+    var cardPhoto = makeElement('img', 'popup__photo');
+    cardPhoto.width = CARD_PIC_WIDTH;
+    cardPhoto.height = CARD_PIC_HEIGHT;
+    cardPhoto.src = dataArr[0].offer.photos[i];
+
+    cardPhotos.appendChild(cardPhoto);
+  }
+
+  var cardAvatar = cardElement.querySelector('.popup__avatar');
+  cardAvatar.src = dataArr[0].author.avatar;
+
+  return cardElement;
 };
 
 // Цикл, формирует массив объектов
@@ -146,82 +241,12 @@ for (var i = 0; i < OBJECTS_QUANTITY; i++) {
 var map = document.querySelector('.map');
 map.classList.remove('map--faded');
 
-// Куда вставлять Метки
-var pinListElement = document.querySelector('.map__pins');
-// Перед чем вставлять Карточку (в map)
-var mapFilters = document.querySelector('.map__filters-container');
-
-// Переменные для хранения Метки и Карточки
-// берутся из шаблона
-var pinTamplate = document.querySelector('#pin')
-    .content
-    .querySelector('.map__pin');
-var cardTamplate = document.querySelector('#card')
-    .content
-    .querySelector('.map__card');
-
 // Отрисовка Меток на карте
-var fragmentPins = document.createDocumentFragment();
-for (i = 0; i < objects.length; i++) {
-  var pinElement = pinTamplate.cloneNode(true);
-
-  var pinPositionX = (objects[i].location.x <= PIN_WIDTH) ? objects[i].location.x : objects[i].location.x - PIN_WIDTH;
-  var pinPositionY = (objects[i].location.y <= PIN_HEIGHT) ? objects[i].location.y : objects[i].location.y - PIN_HEIGHT;
-  pinElement.style.left = pinPositionX + 'px';
-  pinElement.style.top = pinPositionY + 'px';
-
-  var pinAvatar = pinElement.firstChild;
-  pinAvatar.src = objects[i].author.avatar;
-
-  fragmentPins.appendChild(pinElement);
-}
-
-// Добавляет фрагмент с метками в список меток
-pinListElement.appendChild(fragmentPins);
+renderPins(objects, '.map__pins', '#pin', '.map__pin');
 
 // Отрисовка Карточки
-var cardElement = cardTamplate.cloneNode(true);
-
-addTextContent(cardElement, '.popup__title', objects[0].offer.title);
-addTextContent(cardElement, '.popup__text--address', objects[0].offer.address);
-addTextContent(cardElement, '.popup__text--price', objects[0].offer.price + ' ₽/ночь');
-addTextContent(cardElement, '.popup__text--capacity', objects[0].offer.rooms + ' комнаты для ' + objects[0].offer.guests + ' гостей');
-addTextContent(cardElement, '.popup__text--time', 'Заезд после ' + objects[0].offer.checkin + ', выезд до ' + objects[0].offer.checkout);
-addTextContent(cardElement, '.popup__description', objects[0].offer.description);
-
-var cardType = cardElement.querySelector('.popup__type');
-if (objects[0].offer.type === 'palace') {
-  cardType.textContent = 'Дворец';
-} else if (objects[0].offer.type === 'flat') {
-  cardType.textContent = 'Квартира';
-} else if (objects[0].offer.type === 'house') {
-  cardType.textContent = 'Дом';
-} else if (objects[0].offer.type === 'bungalo') {
-  cardType.textContent = 'Бунгало';
-}
-
-var cardFeatures = cardElement.querySelector('.popup__features');
-removeChildren(cardFeatures);
-for (i = 0; i < objects[0].offer.features.length; i++) {
-  var cardFeature = makeElement('li', 'popup__feature');
-  var cardFeatureMod = 'popup__feature--' + objects[0].offer.features[i];
-  cardFeature.classList.add(cardFeatureMod);
-
-  cardFeatures.appendChild(cardFeature);
-}
-
-var cardPhotos = cardElement.querySelector('.popup__photos');
-removeChildren(cardPhotos);
-for (i = 0; i < objects[0].offer.photos.length; i++) {
-  var cardPhoto = makeElement('img', 'popup__photo');
-  cardPhoto.width = 45;
-  cardPhoto.height = 40;
-  cardPhoto.src = objects[0].offer.photos[i];
-
-  cardPhotos.appendChild(cardPhoto);
-}
-
-var cardAvatar = cardElement.querySelector('.popup__avatar');
-cardAvatar.src = objects[0].author.avatar;
+var cardElement = renderCard('#card', '.map__card', objects);
+// Перед чем вставлять Карточку (в map)
+var mapFilters = document.querySelector('.map__filters-container');
 
 map.insertBefore(cardElement, mapFilters);
