@@ -75,6 +75,14 @@ var cardTypeTranslated = {
   'bungalo': 'Бунгало'
 };
 
+// Функция получения левого маргина body, возвращает число
+var getBodyMargin = function () {
+  var body = document.querySelector('body');
+  var style = body.currentStyle || window.getComputedStyle(body);
+
+  return parseInt(style.marginLeft, 10);
+};
+
 // Функция перемешивания массива
 var shuffleArr = function shuffle(arr) {
   var j;
@@ -168,8 +176,34 @@ var renderPins = function (dataArr, targetList, templateId, templateClass) {
   var pinTemplate = document.querySelector(templateId)
     .content
     .querySelector(templateClass);
-  // Отрисовка Меток на карте
+  // Фрагмент куда будет добавлять метки
   var fragmentPins = document.createDocumentFragment();
+
+  // Функция поведение при клике на метку
+  var onPinClick = function (pin, card) {
+    pin.addEventListener('click', function () {
+      // Добавление класса активной метке
+      var activePin = document.querySelector('.map__pin--active');
+      if (activePin) {
+        activePin.classList.remove('map__pin--active');
+      }
+      pin.classList.add('map__pin--active');
+
+      // Отрисовка только одной карточки
+      var openedCard = document.querySelector('.map__card');
+      if (openedCard) {
+        openedCard.remove();
+      }
+      var cardElement = renderCard('#card', '.map__card', card);
+
+      // Перед чем вставлять Карточку (в map)
+      var mapFilters = document.querySelector('.map__filters-container');
+      var map = document.querySelector('.map');
+      map.insertBefore(cardElement, mapFilters);
+    });
+  };
+  // --------------------------------
+
   for (var i = 0; i < dataArr.length; i++) {
     var pinElement = pinTemplate.cloneNode(true);
     var pinPositionX = (dataArr[i].location.x <= PIN_WIDTH) ? dataArr[i].location.x : dataArr[i].location.x - PIN_WIDTH;
@@ -178,6 +212,10 @@ var renderPins = function (dataArr, targetList, templateId, templateClass) {
     pinElement.style.top = pinPositionY + 'px';
     var pinAvatar = pinElement.firstChild;
     pinAvatar.src = dataArr[i].author.avatar;
+
+    onPinClick(pinElement, objects[i]);
+
+    // Добавление в список
     fragmentPins.appendChild(pinElement);
   }
   // Добавляет фрагмент с метками в список меток
@@ -226,6 +264,12 @@ var renderCard = function (templateId, templateClass, dataElement) {
   var cardAvatar = cardElement.querySelector('.popup__avatar');
   cardAvatar.src = dataElement.author.avatar;
 
+  // Поведение при клике
+  var closeButton = cardElement.querySelector('.popup__close');
+  closeButton.addEventListener('click', function () {
+    cardElement.remove();
+  });
+
   return cardElement;
 };
 
@@ -237,16 +281,111 @@ for (var i = 0; i < OBJECTS_QUANTITY; i++) {
   objects.push(makeObject(avatarLink, offerTitle));
 }
 
-// Удаляет класс карты
-var map = document.querySelector('.map');
-map.classList.remove('map--faded');
+// Функция активации/деактивации полей ввода
+// принимает строку со значение on или off
+var makeAllFormsOnOrOff = function (status) {
+  var fieldsets = document.querySelectorAll('fieldset');
+  var selects = document.querySelectorAll('.map__filters select');
 
-// Отрисовка Меток на карте
-renderPins(objects, '.map__pins', '#pin', '.map__pin');
+  if (status === 'off') {
+    for (i = 0; i < fieldsets.length; i++) {
+      fieldsets[i].setAttribute('disabled', 'disabled');
+    }
+    for (i = 0; i < selects.length; i++) {
+      selects[i].setAttribute('disabled', 'disabled');
+    }
+  }
 
-// Отрисовка Карточки
-var cardElement = renderCard('#card', '.map__card', objects[0]);
-// Перед чем вставлять Карточку (в map)
-var mapFilters = document.querySelector('.map__filters-container');
+  if (status === 'on') {
+    for (i = 0; i < fieldsets.length; i++) {
+      fieldsets[i].removeAttribute('disabled', 'disabled');
+    }
+    for (i = 0; i < selects.length; i++) {
+      selects[i].removeAttribute('disabled', 'disabled');
+    }
+  }
 
-map.insertBefore(cardElement, mapFilters);
+};
+
+// Функция удаления класса
+var removeClass = function (elementClass, classToRemove) {
+  var element = document.querySelector(elementClass);
+  element.classList.remove(classToRemove);
+};
+
+// Деактивируем все поля
+makeAllFormsOnOrOff('off');
+// Хранитель
+var itWas;
+
+
+// -----------------------------------------------------------
+// Перетаскивание главной метки
+(function () {
+  var pinMainHandle = document.querySelector('.map__pin--main');
+
+  pinMainHandle.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+
+    // Начальные координаты
+    var startCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+
+    var dragged = false;
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+      dragged = true;
+
+      var shift = {
+        x: startCoords.x - moveEvt.clientX,
+        y: startCoords.y - moveEvt.clientY
+      };
+
+      startCoords = {
+        x: moveEvt.clientX,
+        y: moveEvt.clientY
+      };
+
+      pinMainHandle.style.top = (pinMainHandle.offsetTop - shift.y) + 'px';
+      pinMainHandle.style.left = (pinMainHandle.offsetLeft - shift.x) + 'px';
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+
+      // Если было перетаскивание
+      if (dragged) {
+        // Выполняется один раз
+        if (!itWas) {
+          // Удаляет класс карты
+          removeClass('.map', 'map--faded');
+          // Удаляет класс формы
+          removeClass('.ad-form', 'ad-form--disabled');
+          // Активирует формы
+          makeAllFormsOnOrOff('on');
+          // Отрисовка Меток на карте
+          renderPins(objects, '.map__pins', '#pin', '.map__pin');
+
+          itWas = true;
+        }
+
+        // Устанавливает адрес
+        var address = document.querySelector('#address');
+        address.setAttribute('disabled', 'disabled');
+        var addressX = (upEvt.clientX - (PIN_WIDTH / 2) - getBodyMargin()) < 0 ? 0 : upEvt.clientX - (PIN_WIDTH / 2) - getBodyMargin();
+        var addressY = upEvt.clientY < 0 ? 0 : upEvt.clientY;
+        address.value = addressX + ',' + addressY;
+      }
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
+})();
+
