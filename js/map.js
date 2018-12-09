@@ -180,7 +180,7 @@ var renderPins = function (dataArr, targetList, templateId, templateClass) {
   var fragmentPins = document.createDocumentFragment();
 
   // Функция поведение при клике на метку
-  var onPinClick = function (pin, card) {
+  var addPinClickHandler = function (pin, card) {
     pin.addEventListener('click', function () {
       // Добавление класса активной метке
       var activePin = document.querySelector('.map__pin--active');
@@ -207,13 +207,13 @@ var renderPins = function (dataArr, targetList, templateId, templateClass) {
   for (var i = 0; i < dataArr.length; i++) {
     var pinElement = pinTemplate.cloneNode(true);
     var pinPositionX = (dataArr[i].location.x <= PIN_WIDTH) ? dataArr[i].location.x : dataArr[i].location.x - PIN_WIDTH;
-    var pinPositionY = (dataArr[i].location.y <= PIN_HEIGHT) ? dataArr[i].location.y : dataArr[i].location.y - PIN_HEIGHT;
+    var pinPositionY = (dataArr[i].location.y <= PIN_HEIGHT) ? dataArr[i].location.y - PIN_HEIGHT / 2 : dataArr[i].location.y;
     pinElement.style.left = pinPositionX + 'px';
     pinElement.style.top = pinPositionY + 'px';
     var pinAvatar = pinElement.firstChild;
     pinAvatar.src = dataArr[i].author.avatar;
 
-    onPinClick(pinElement, objects[i]);
+    addPinClickHandler(pinElement, objects[i]);
 
     // Добавление в список
     fragmentPins.appendChild(pinElement);
@@ -282,29 +282,18 @@ for (var i = 0; i < OBJECTS_QUANTITY; i++) {
 }
 
 // Функция активации/деактивации полей ввода
-// принимает строку со значение on или off
-var makeAllFormsOnOrOff = function (status) {
+// принимает true or false
+var makeAllFormsDisable = function (status) {
   var fieldsets = document.querySelectorAll('fieldset');
   var selects = document.querySelectorAll('.map__filters select');
 
-  if (status === 'off') {
-    for (i = 0; i < fieldsets.length; i++) {
-      fieldsets[i].setAttribute('disabled', 'disabled');
+  var disableIt = function (arr, statusx) {
+    for (i = 0; i < arr.length; i++) {
+      arr[i].disabled = statusx;
     }
-    for (i = 0; i < selects.length; i++) {
-      selects[i].setAttribute('disabled', 'disabled');
-    }
-  }
-
-  if (status === 'on') {
-    for (i = 0; i < fieldsets.length; i++) {
-      fieldsets[i].removeAttribute('disabled', 'disabled');
-    }
-    for (i = 0; i < selects.length; i++) {
-      selects[i].removeAttribute('disabled', 'disabled');
-    }
-  }
-
+  };
+  disableIt(fieldsets, status);
+  disableIt(selects, status);
 };
 
 // Функция удаления класса
@@ -314,15 +303,17 @@ var removeClass = function (elementClass, classToRemove) {
 };
 
 // Деактивируем все поля
-makeAllFormsOnOrOff('off');
-// Хранитель
-var itWas;
-
+makeAllFormsDisable(true);
 
 // -----------------------------------------------------------
 // Перетаскивание главной метки
 (function () {
   var pinMainHandle = document.querySelector('.map__pin--main');
+
+  // Устанавливает адрес
+  var address = document.querySelector('#address');
+  address.setAttribute('disabled', 'disabled');
+  address.value = pinMainHandle.offsetLeft + ',' + pinMainHandle.offsetTop;
 
   pinMainHandle.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
@@ -349,8 +340,27 @@ var itWas;
         y: moveEvt.clientY
       };
 
-      pinMainHandle.style.top = (pinMainHandle.offsetTop - shift.y) + 'px';
-      pinMainHandle.style.left = (pinMainHandle.offsetLeft - shift.x) + 'px';
+      var positionX = pinMainHandle.offsetLeft - shift.x;
+      var positionY = pinMainHandle.offsetTop - shift.y;
+
+      pinMainHandle.style.top = positionY + 'px';
+      pinMainHandle.style.left = positionX + 'px';
+
+      // Огрангичения перетаскивая по карте
+      if (positionX < 0) {
+        pinMainHandle.style.left = 0 + 'px';
+      } else if (positionX > (WIDTH_MAX - PIN_WIDTH)) {
+        pinMainHandle.style.left = (WIDTH_MAX - PIN_WIDTH) + 'px';
+      } else if (positionY < (HEIGHT_MIN - PIN_HEIGHT / 2)) {
+        pinMainHandle.style.top = (HEIGHT_MIN - PIN_HEIGHT / 2) + 'px';
+      } else if (positionY > HEIGHT_MAX) {
+        pinMainHandle.style.top = HEIGHT_MAX + 'px';
+      }
+
+      // Устанавливает адрес во время перетаскивания
+      var addressX = (moveEvt.clientX - (PIN_WIDTH / 2) - getBodyMargin()) < 0 ? 0 : moveEvt.clientX - (PIN_WIDTH / 2) - getBodyMargin();
+      var addressY = moveEvt.clientY < 0 ? 0 : moveEvt.clientY;
+      address.value = addressX + ',' + addressY;
     };
 
     var onMouseUp = function (upEvt) {
@@ -361,26 +371,17 @@ var itWas;
 
       // Если было перетаскивание
       if (dragged) {
-        // Выполняется один раз
-        if (!itWas) {
+        var pinList = document.querySelectorAll('.map__pin');
+        if (pinList.length < 2) {
           // Удаляет класс карты
           removeClass('.map', 'map--faded');
           // Удаляет класс формы
           removeClass('.ad-form', 'ad-form--disabled');
           // Активирует формы
-          makeAllFormsOnOrOff('on');
+          makeAllFormsDisable(false);
           // Отрисовка Меток на карте
           renderPins(objects, '.map__pins', '#pin', '.map__pin');
-
-          itWas = true;
         }
-
-        // Устанавливает адрес
-        var address = document.querySelector('#address');
-        address.setAttribute('disabled', 'disabled');
-        var addressX = (upEvt.clientX - (PIN_WIDTH / 2) - getBodyMargin()) < 0 ? 0 : upEvt.clientX - (PIN_WIDTH / 2) - getBodyMargin();
-        var addressY = upEvt.clientY < 0 ? 0 : upEvt.clientY;
-        address.value = addressX + ',' + addressY;
       }
     };
 
@@ -388,4 +389,3 @@ var itWas;
     document.addEventListener('mouseup', onMouseUp);
   });
 })();
-
