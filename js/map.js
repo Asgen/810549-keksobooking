@@ -75,12 +75,12 @@ var cardTypeTranslated = {
   'bungalo': 'Бунгало'
 };
 
-// Функция получения левого маргина body, возвращает число
-var getBodyMargin = function () {
-  var body = document.querySelector('body');
-  var style = body.currentStyle || window.getComputedStyle(body);
-
-  return parseInt(style.marginLeft, 10);
+// Мапа для минимальной цены
+var minPriceFromType = {
+  'palace': 10000,
+  'flat': 1000,
+  'house': 5000,
+  'bungalo': 0
 };
 
 // Функция перемешивания массива
@@ -305,14 +305,78 @@ var removeClass = function (elementClass, classToRemove) {
 // Деактивируем все поля
 makeAllFormsDisable(true);
 
-// -----------------------------------------------------------
+// Валидация формы--------------------------------------------
+
+// Зависимость минимальной цены от типа
+var priceInput = document.querySelector('#price');
+var typeInput = document.querySelector('#type');
+
+typeInput.addEventListener('click', function () {
+  var minPrice = typeInput.value;
+  priceInput.min = minPriceFromType[minPrice];
+  priceInput.placeholder = priceInput.min;
+});
+
+// Связь полей времени въезда и выезда
+var timeInInput = document.querySelector('#timein');
+var timeOutInput = document.querySelector('#timeout');
+var timeFieldset = document.querySelector('.ad-form__element--time');
+
+timeFieldset.addEventListener('click', function (event) {
+  var target = event.target; // где был клик?
+  if (target === timeInInput) {
+    timeOutInput.selectedIndex = timeInInput.selectedIndex;
+  } else {
+    timeInInput.selectedIndex = timeOutInput.selectedIndex;
+  }
+});
+
+// Количество гостей зависит от количества комнат
+var roomSelect = document.querySelector('#room-number');
+
+var onlyGuest = document.querySelector('.ad-form__option--1-guest');
+var twoGuests = document.querySelector('.ad-form__option--2-guests');
+var threeGuests = document.querySelector('.ad-form__option--3-guests');
+var noGuests = document.querySelector('.ad-form__option--no-guests');
+
+onlyGuest.disabled = false;
+noGuests.disabled = true;
+threeGuests.disabled = true;
+twoGuests.disabled = true;
+
+roomSelect.addEventListener('click', function (event) {
+  var target = event.target;
+
+  if (target.selectedIndex === 0) {
+    onlyGuest.disabled = false;
+    noGuests.disabled = true;
+    threeGuests.disabled = true;
+    twoGuests.disabled = true;
+  } else if (target.selectedIndex === 1) {
+    onlyGuest.disabled = false;
+    noGuests.disabled = true;
+    threeGuests.disabled = true;
+    twoGuests.disabled = false;
+  } else if (target.selectedIndex === 2) {
+    onlyGuest.disabled = false;
+    noGuests.disabled = true;
+    threeGuests.disabled = false;
+    twoGuests.disabled = false;
+  } else if (target.selectedIndex === 3) {
+    onlyGuest.disabled = true;
+    noGuests.disabled = false;
+    threeGuests.disabled = true;
+    twoGuests.disabled = true;
+  }
+});
+// --------------------------------------------валидация формы
+
 // Перетаскивание главной метки
 (function () {
   var pinMainHandle = document.querySelector('.map__pin--main');
 
   // Устанавливает адрес
   var address = document.querySelector('#address');
-  address.setAttribute('disabled', 'disabled');
   address.value = pinMainHandle.offsetLeft + ',' + pinMainHandle.offsetTop;
 
   pinMainHandle.addEventListener('mousedown', function (evt) {
@@ -320,8 +384,8 @@ makeAllFormsDisable(true);
 
     // Начальные координаты
     var startCoords = {
-      x: evt.clientX,
-      y: evt.clientY
+      x: evt.pageX,
+      y: evt.pageY
     };
 
     var dragged = false;
@@ -331,20 +395,34 @@ makeAllFormsDisable(true);
       dragged = true;
 
       var shift = {
-        x: startCoords.x - moveEvt.clientX,
-        y: startCoords.y - moveEvt.clientY
+        x: startCoords.x - moveEvt.pageX,
+        y: startCoords.y - moveEvt.pageY
       };
 
       startCoords = {
-        x: moveEvt.clientX,
-        y: moveEvt.clientY
+        x: moveEvt.pageX,
+        y: moveEvt.pageY
       };
 
       var positionX = pinMainHandle.offsetLeft - shift.x;
       var positionY = pinMainHandle.offsetTop - shift.y;
 
-      pinMainHandle.style.top = positionY + 'px';
-      pinMainHandle.style.left = positionX + 'px';
+      var mainPinPositionY = positionY;
+      var mainPinPositionX = positionX;
+
+      if (positionY < HEIGHT_MIN) {
+        mainPinPositionY = HEIGHT_MIN;
+      } else if (positionY > HEIGHT_MAX) {
+        mainPinPositionY = HEIGHT_MAX;
+      } else if (positionX < 0) {
+        mainPinPositionX = 0;
+      } else if (positionX > WIDTH_MAX) {
+        mainPinPositionX = WIDTH_MAX;
+      }
+
+      pinMainHandle.style.top = mainPinPositionY + 'px';
+      pinMainHandle.style.left = mainPinPositionX + 'px';
+
 
       // Огрангичения перетаскивая по карте
       if (positionX < 0) {
@@ -358,8 +436,8 @@ makeAllFormsDisable(true);
       }
 
       // Устанавливает адрес во время перетаскивания
-      var addressX = (moveEvt.clientX - (PIN_WIDTH / 2) - getBodyMargin()) < 0 ? 0 : moveEvt.clientX - (PIN_WIDTH / 2) - getBodyMargin();
-      var addressY = moveEvt.clientY < 0 ? 0 : moveEvt.clientY;
+      var addressX = mainPinPositionX;
+      var addressY = mainPinPositionY;
       address.value = addressX + ',' + addressY;
     };
 
