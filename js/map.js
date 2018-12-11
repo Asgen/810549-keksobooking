@@ -377,6 +377,7 @@ roomSelect.addEventListener('click', function (event) {
 
   // Устанавливает адрес
   var address = document.querySelector('#address');
+  address.readOnly = true;
   address.value = pinMainHandle.offsetLeft + ',' + pinMainHandle.offsetTop;
 
   pinMainHandle.addEventListener('mousedown', function (evt) {
@@ -410,8 +411,8 @@ roomSelect.addEventListener('click', function (event) {
       var mainPinPositionY = positionY;
       var mainPinPositionX = positionX;
 
-      if (positionY < HEIGHT_MIN) {
-        mainPinPositionY = HEIGHT_MIN;
+      if (positionY < HEIGHT_MIN - PIN_HEIGHT) {
+        mainPinPositionY = HEIGHT_MIN - PIN_HEIGHT;
       } else if (positionY > HEIGHT_MAX) {
         mainPinPositionY = HEIGHT_MAX;
       } else if (positionX < 0) {
@@ -429,10 +430,10 @@ roomSelect.addEventListener('click', function (event) {
         pinMainHandle.style.left = 0 + 'px';
       } else if (positionX > (WIDTH_MAX - PIN_WIDTH)) {
         pinMainHandle.style.left = (WIDTH_MAX - PIN_WIDTH) + 'px';
-      } else if (positionY < (HEIGHT_MIN - PIN_HEIGHT / 2)) {
-        pinMainHandle.style.top = (HEIGHT_MIN - PIN_HEIGHT / 2) + 'px';
-      } else if (positionY > HEIGHT_MAX) {
-        pinMainHandle.style.top = HEIGHT_MAX + 'px';
+      } else if (positionY < (HEIGHT_MIN - PIN_HEIGHT)) {
+        pinMainHandle.style.top = (HEIGHT_MIN - PIN_HEIGHT) + 'px';
+      } else if (positionY > HEIGHT_MAX - PIN_HEIGHT) {
+        pinMainHandle.style.top = HEIGHT_MAX - PIN_HEIGHT + 'px';
       }
 
       // Устанавливает адрес во время перетаскивания
