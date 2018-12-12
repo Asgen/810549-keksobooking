@@ -6,6 +6,7 @@ var OBJECTS_QUANTITY = 8;
 // Размеры Метки
 var PIN_WIDTH = 50;
 var PIN_HEIGHT = 70;
+var PIN_MAIN_WIDTH = 63;
 
 // Размер контейнера меток
 var HEIGHT_MIN = 130;
@@ -23,7 +24,6 @@ var GUESTS_MAX = 50;
 // Размеры фото в карточке
 var CARD_PIC_WIDTH = 45;
 var CARD_PIC_HEIGHT = 40;
-
 
 var objects = [];
 var offers = {
@@ -395,50 +395,46 @@ roomSelect.addEventListener('click', function (event) {
       moveEvt.preventDefault();
       dragged = true;
 
+      // Смещение
       var shift = {
         x: startCoords.x - moveEvt.pageX,
         y: startCoords.y - moveEvt.pageY
       };
 
+      // Координаты после смещения
       startCoords = {
         x: moveEvt.pageX,
         y: moveEvt.pageY
       };
 
+      // Расчет позиции метки при перетаскивании
       var positionX = pinMainHandle.offsetLeft - shift.x;
       var positionY = pinMainHandle.offsetTop - shift.y;
 
       var mainPinPositionY = positionY;
       var mainPinPositionX = positionX;
 
-      if (positionY < HEIGHT_MIN - PIN_HEIGHT) {
+      // Позиции метки в крайних точках
+      if (mainPinPositionY < HEIGHT_MIN - PIN_HEIGHT) {
         mainPinPositionY = HEIGHT_MIN - PIN_HEIGHT;
-      } else if (positionY > HEIGHT_MAX) {
-        mainPinPositionY = HEIGHT_MAX;
-      } else if (positionX < 0) {
+      } else if (mainPinPositionY > HEIGHT_MAX - PIN_HEIGHT) {
+        mainPinPositionY = HEIGHT_MAX - PIN_HEIGHT;
+      }
+      while (mainPinPositionX < 0) {
         mainPinPositionX = 0;
-      } else if (positionX > WIDTH_MAX) {
-        mainPinPositionX = WIDTH_MAX;
+      }
+      while (mainPinPositionX > WIDTH_MAX - PIN_MAIN_WIDTH) {
+        mainPinPositionX = WIDTH_MAX - PIN_MAIN_WIDTH;
       }
 
+
+      // Задает позицию метки
       pinMainHandle.style.top = mainPinPositionY + 'px';
       pinMainHandle.style.left = mainPinPositionX + 'px';
 
-
-      // Огрангичения перетаскивая по карте
-      if (positionX < 0) {
-        pinMainHandle.style.left = 0 + 'px';
-      } else if (positionX > (WIDTH_MAX - PIN_WIDTH)) {
-        pinMainHandle.style.left = (WIDTH_MAX - PIN_WIDTH) + 'px';
-      } else if (positionY < (HEIGHT_MIN - PIN_HEIGHT)) {
-        pinMainHandle.style.top = (HEIGHT_MIN - PIN_HEIGHT) + 'px';
-      } else if (positionY > HEIGHT_MAX - PIN_HEIGHT) {
-        pinMainHandle.style.top = HEIGHT_MAX - PIN_HEIGHT + 'px';
-      }
-
       // Устанавливает адрес во время перетаскивания
       var addressX = mainPinPositionX;
-      var addressY = mainPinPositionY;
+      var addressY = mainPinPositionY + PIN_HEIGHT;
       address.value = addressX + ',' + addressY;
     };
 
