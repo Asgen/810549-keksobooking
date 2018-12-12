@@ -296,14 +296,55 @@ var makeAllFormsDisable = function (status) {
   disableIt(selects, status);
 };
 
-// Функция удаления класса
-var removeClass = function (elementClass, classToRemove) {
+// Функция добавления/удаления класса
+var chacngeClass = function (elementClass, classToChange, addOrRemove) {
   var element = document.querySelector(elementClass);
-  element.classList.remove(classToRemove);
+  switch (addOrRemove) {
+    case 'add':
+      element.classList.add(classToChange);
+      break;
+    case 'remove':
+      element.classList.remove(classToChange);
+      break;
+  }
 };
 
 // Деактивируем все поля
 makeAllFormsDisable(true);
+
+// Кнопка reset
+var adForm = document.querySelector('.ad-form');
+var resetButton = adForm.querySelector('.ad-form__reset');
+
+var onResetButtonClick = function (evt) {
+  evt.preventDefault();
+
+  // Блокирует карту
+  chacngeClass('.map', 'map--faded', 'add');
+  // Блокирует форму
+  chacngeClass('.ad-form', 'ad-form--disabled', 'add');
+  // Блокирует поля
+  makeAllFormsDisable(true);
+  // Удаляет все отрисованные метки
+  var pinListo = document.querySelectorAll('.map__pin');
+  for (i = 1; i < pinListo.length; i++) {
+    pinListo[i].remove();
+  }
+  // Удаляет карточку, если открыта
+  var openedCard = document.querySelector('.map__card');
+  if (openedCard) {
+    openedCard.remove();
+  }
+
+  // Ставит метку посередине карты
+  pinListo[0].style.top = window.innerHeight / 2 + 'px';
+  pinListo[0].style.left = (WIDTH_MAX - PIN_WIDTH) / 2 + 'px';
+  // Прописывает адрес
+  var address = document.querySelector('#address');
+  address.value = pinListo[0].offsetLeft + ',' + pinListo[0].offsetTop;
+};
+
+resetButton.addEventListener('click', onResetButtonClick);
 
 // Валидация формы--------------------------------------------
 
@@ -347,26 +388,31 @@ twoGuests.disabled = true;
 roomSelect.addEventListener('click', function (event) {
   var target = event.target;
 
-  if (target.selectedIndex === 0) {
-    onlyGuest.disabled = false;
-    noGuests.disabled = true;
-    threeGuests.disabled = true;
-    twoGuests.disabled = true;
-  } else if (target.selectedIndex === 1) {
-    onlyGuest.disabled = false;
-    noGuests.disabled = true;
-    threeGuests.disabled = true;
-    twoGuests.disabled = false;
-  } else if (target.selectedIndex === 2) {
-    onlyGuest.disabled = false;
-    noGuests.disabled = true;
-    threeGuests.disabled = false;
-    twoGuests.disabled = false;
-  } else if (target.selectedIndex === 3) {
-    onlyGuest.disabled = true;
-    noGuests.disabled = false;
-    threeGuests.disabled = true;
-    twoGuests.disabled = true;
+  switch (target.selectedIndex) {
+    case 0:
+      onlyGuest.disabled = false;
+      noGuests.disabled = true;
+      threeGuests.disabled = true;
+      twoGuests.disabled = true;
+      break;
+    case 1:
+      onlyGuest.disabled = false;
+      noGuests.disabled = true;
+      threeGuests.disabled = true;
+      twoGuests.disabled = false;
+      break;
+    case 2:
+      onlyGuest.disabled = false;
+      noGuests.disabled = true;
+      threeGuests.disabled = false;
+      twoGuests.disabled = false;
+      break;
+    case 3:
+      onlyGuest.disabled = true;
+      noGuests.disabled = false;
+      threeGuests.disabled = true;
+      twoGuests.disabled = true;
+      break;
   }
 });
 // --------------------------------------------валидация формы
@@ -449,9 +495,9 @@ roomSelect.addEventListener('click', function (event) {
         var pinList = document.querySelectorAll('.map__pin');
         if (pinList.length < 2) {
           // Удаляет класс карты
-          removeClass('.map', 'map--faded');
+          chacngeClass('.map', 'map--faded', 'remove');
           // Удаляет класс формы
-          removeClass('.ad-form', 'ad-form--disabled');
+          chacngeClass('.ad-form', 'ad-form--disabled', 'remove');
           // Активирует формы
           makeAllFormsDisable(false);
           // Отрисовка Меток на карте
