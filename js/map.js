@@ -6,6 +6,7 @@ var OBJECTS_QUANTITY = 8;
 // Размеры Метки
 var PIN_WIDTH = 50;
 var PIN_HEIGHT = 70;
+var PIN_MAIN_WIDTH = 63;
 
 // Размер контейнера меток
 var HEIGHT_MIN = 130;
@@ -23,7 +24,6 @@ var GUESTS_MAX = 50;
 // Размеры фото в карточке
 var CARD_PIC_WIDTH = 45;
 var CARD_PIC_HEIGHT = 40;
-
 
 var objects = [];
 var offers = {
@@ -73,6 +73,14 @@ var cardTypeTranslated = {
   'flat': 'Квартира',
   'house': 'Дом',
   'bungalo': 'Бунгало'
+};
+
+// Мапа для минимальной цены
+var minPriceFromType = {
+  'palace': 10000,
+  'flat': 1000,
+  'house': 5000,
+  'bungalo': 0
 };
 
 // Функция перемешивания массива
@@ -168,16 +176,46 @@ var renderPins = function (dataArr, targetList, templateId, templateClass) {
   var pinTemplate = document.querySelector(templateId)
     .content
     .querySelector(templateClass);
-  // Отрисовка Меток на карте
+  // Фрагмент куда будет добавлять метки
   var fragmentPins = document.createDocumentFragment();
+
+  // Функция поведение при клике на метку
+  var addPinClickHandler = function (pin, card) {
+    pin.addEventListener('click', function () {
+      // Добавление класса активной метке
+      var activePin = document.querySelector('.map__pin--active');
+      if (activePin) {
+        activePin.classList.remove('map__pin--active');
+      }
+      pin.classList.add('map__pin--active');
+
+      // Отрисовка только одной карточки
+      var openedCard = document.querySelector('.map__card');
+      if (openedCard) {
+        openedCard.remove();
+      }
+      var cardElement = renderCard('#card', '.map__card', card);
+
+      // Перед чем вставлять Карточку (в map)
+      var mapFilters = document.querySelector('.map__filters-container');
+      var map = document.querySelector('.map');
+      map.insertBefore(cardElement, mapFilters);
+    });
+  };
+  // --------------------------------
+
   for (var i = 0; i < dataArr.length; i++) {
     var pinElement = pinTemplate.cloneNode(true);
     var pinPositionX = (dataArr[i].location.x <= PIN_WIDTH) ? dataArr[i].location.x : dataArr[i].location.x - PIN_WIDTH;
-    var pinPositionY = (dataArr[i].location.y <= PIN_HEIGHT) ? dataArr[i].location.y : dataArr[i].location.y - PIN_HEIGHT;
+    var pinPositionY = (dataArr[i].location.y <= PIN_HEIGHT) ? dataArr[i].location.y - PIN_HEIGHT / 2 : dataArr[i].location.y;
     pinElement.style.left = pinPositionX + 'px';
     pinElement.style.top = pinPositionY + 'px';
     var pinAvatar = pinElement.firstChild;
     pinAvatar.src = dataArr[i].author.avatar;
+
+    addPinClickHandler(pinElement, objects[i]);
+
+    // Добавление в список
     fragmentPins.appendChild(pinElement);
   }
   // Добавляет фрагмент с метками в список меток
@@ -226,6 +264,12 @@ var renderCard = function (templateId, templateClass, dataElement) {
   var cardAvatar = cardElement.querySelector('.popup__avatar');
   cardAvatar.src = dataElement.author.avatar;
 
+  // Поведение при клике
+  var closeButton = cardElement.querySelector('.popup__close');
+  closeButton.addEventListener('click', function () {
+    cardElement.remove();
+  });
+
   return cardElement;
 };
 
@@ -237,16 +281,232 @@ for (var i = 0; i < OBJECTS_QUANTITY; i++) {
   objects.push(makeObject(avatarLink, offerTitle));
 }
 
-// Удаляет класс карты
-var map = document.querySelector('.map');
-map.classList.remove('map--faded');
+// Функция активации/деактивации полей ввода
+// принимает true or false
+var makeAllFormsDisable = function (status) {
+  var fieldsets = document.querySelectorAll('fieldset');
+  var selects = document.querySelectorAll('.map__filters select');
 
-// Отрисовка Меток на карте
-renderPins(objects, '.map__pins', '#pin', '.map__pin');
+  var disableIt = function (arr, statusx) {
+    for (i = 0; i < arr.length; i++) {
+      arr[i].disabled = statusx;
+    }
+  };
+  disableIt(fieldsets, status);
+  disableIt(selects, status);
+};
 
-// Отрисовка Карточки
-var cardElement = renderCard('#card', '.map__card', objects[0]);
-// Перед чем вставлять Карточку (в map)
-var mapFilters = document.querySelector('.map__filters-container');
+// Функция добавления/удаления класса
+var chacngeClass = function (elementClass, classToChange, addOrRemove) {
+  var element = document.querySelector(elementClass);
+  switch (addOrRemove) {
+    case 'add':
+      element.classList.add(classToChange);
+      break;
+    case 'remove':
+      element.classList.remove(classToChange);
+      break;
+  }
+};
 
-map.insertBefore(cardElement, mapFilters);
+// Деактивируем все поля
+makeAllFormsDisable(true);
+
+// Кнопка reset
+var adForm = document.querySelector('.ad-form');
+var resetButton = adForm.querySelector('.ad-form__reset');
+
+var onResetButtonClick = function (evt) {
+  evt.preventDefault();
+
+  // Блокирует карту
+  chacngeClass('.map', 'map--faded', 'add');
+  // Блокирует форму
+  chacngeClass('.ad-form', 'ad-form--disabled', 'add');
+  // Блокирует поля
+  makeAllFormsDisable(true);
+  // Удаляет все отрисованные метки
+  var pinListo = document.querySelectorAll('.map__pin');
+  for (i = 1; i < pinListo.length; i++) {
+    pinListo[i].remove();
+  }
+  // Удаляет карточку, если открыта
+  var openedCard = document.querySelector('.map__card');
+  if (openedCard) {
+    openedCard.remove();
+  }
+
+  // Ставит метку посередине карты
+  pinListo[0].style.top = window.innerHeight / 2 + 'px';
+  pinListo[0].style.left = (WIDTH_MAX - PIN_WIDTH) / 2 + 'px';
+  // Прописывает адрес
+  var address = document.querySelector('#address');
+  address.value = pinListo[0].offsetLeft + ',' + pinListo[0].offsetTop;
+};
+
+resetButton.addEventListener('click', onResetButtonClick);
+
+// Валидация формы--------------------------------------------
+
+// Зависимость минимальной цены от типа
+var priceInput = document.querySelector('#price');
+var typeInput = document.querySelector('#type');
+
+typeInput.addEventListener('click', function () {
+  var minPrice = typeInput.value;
+  priceInput.min = minPriceFromType[minPrice];
+  priceInput.placeholder = priceInput.min;
+});
+
+// Связь полей времени въезда и выезда
+var timeInInput = document.querySelector('#timein');
+var timeOutInput = document.querySelector('#timeout');
+var timeFieldset = document.querySelector('.ad-form__element--time');
+
+timeFieldset.addEventListener('click', function (event) {
+  var target = event.target; // где был клик?
+  if (target === timeInInput) {
+    timeOutInput.selectedIndex = timeInInput.selectedIndex;
+  } else {
+    timeInInput.selectedIndex = timeOutInput.selectedIndex;
+  }
+});
+
+// Количество гостей зависит от количества комнат
+var roomSelect = document.querySelector('#room-number');
+
+var onlyGuest = document.querySelector('.ad-form__option--1-guest');
+var twoGuests = document.querySelector('.ad-form__option--2-guests');
+var threeGuests = document.querySelector('.ad-form__option--3-guests');
+var noGuests = document.querySelector('.ad-form__option--no-guests');
+
+onlyGuest.disabled = false;
+noGuests.disabled = true;
+threeGuests.disabled = true;
+twoGuests.disabled = true;
+
+roomSelect.addEventListener('click', function (event) {
+  var target = event.target;
+
+  switch (target.selectedIndex) {
+    case 0:
+      onlyGuest.disabled = false;
+      noGuests.disabled = true;
+      threeGuests.disabled = true;
+      twoGuests.disabled = true;
+      break;
+    case 1:
+      onlyGuest.disabled = false;
+      noGuests.disabled = true;
+      threeGuests.disabled = true;
+      twoGuests.disabled = false;
+      break;
+    case 2:
+      onlyGuest.disabled = false;
+      noGuests.disabled = true;
+      threeGuests.disabled = false;
+      twoGuests.disabled = false;
+      break;
+    case 3:
+      onlyGuest.disabled = true;
+      noGuests.disabled = false;
+      threeGuests.disabled = true;
+      twoGuests.disabled = true;
+      break;
+  }
+});
+// --------------------------------------------валидация формы
+
+// Перетаскивание главной метки
+(function () {
+  var pinMainHandle = document.querySelector('.map__pin--main');
+
+  // Устанавливает адрес
+  var address = document.querySelector('#address');
+  address.readOnly = true;
+  address.value = pinMainHandle.offsetLeft + ',' + pinMainHandle.offsetTop;
+
+  pinMainHandle.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+
+    // Начальные координаты
+    var startCoords = {
+      x: evt.pageX,
+      y: evt.pageY
+    };
+
+    var dragged = false;
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+      dragged = true;
+
+      // Смещение
+      var shift = {
+        x: startCoords.x - moveEvt.pageX,
+        y: startCoords.y - moveEvt.pageY
+      };
+
+      // Координаты после смещения
+      startCoords = {
+        x: moveEvt.pageX,
+        y: moveEvt.pageY
+      };
+
+      // Расчет позиции метки при перетаскивании
+      var positionX = pinMainHandle.offsetLeft - shift.x;
+      var positionY = pinMainHandle.offsetTop - shift.y;
+
+      var mainPinPositionY = positionY;
+      var mainPinPositionX = positionX;
+
+      // Позиции метки в крайних точках
+      if (mainPinPositionY < HEIGHT_MIN - PIN_HEIGHT) {
+        mainPinPositionY = HEIGHT_MIN - PIN_HEIGHT;
+      } else if (mainPinPositionY > HEIGHT_MAX - PIN_HEIGHT) {
+        mainPinPositionY = HEIGHT_MAX - PIN_HEIGHT;
+      }
+      while (mainPinPositionX < 0) {
+        mainPinPositionX = 0;
+      }
+      while (mainPinPositionX > WIDTH_MAX - PIN_MAIN_WIDTH) {
+        mainPinPositionX = WIDTH_MAX - PIN_MAIN_WIDTH;
+      }
+
+
+      // Задает позицию метки
+      pinMainHandle.style.top = mainPinPositionY + 'px';
+      pinMainHandle.style.left = mainPinPositionX + 'px';
+
+      // Устанавливает адрес во время перетаскивания
+      var addressX = mainPinPositionX;
+      var addressY = mainPinPositionY + PIN_HEIGHT;
+      address.value = addressX + ',' + addressY;
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+
+      // Если было перетаскивание
+      if (dragged) {
+        var pinList = document.querySelectorAll('.map__pin');
+        if (pinList.length < 2) {
+          // Удаляет класс карты
+          chacngeClass('.map', 'map--faded', 'remove');
+          // Удаляет класс формы
+          chacngeClass('.ad-form', 'ad-form--disabled', 'remove');
+          // Активирует формы
+          makeAllFormsDisable(false);
+          // Отрисовка Меток на карте
+          renderPins(objects, '.map__pins', '#pin', '.map__pin');
+        }
+      }
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
+})();
