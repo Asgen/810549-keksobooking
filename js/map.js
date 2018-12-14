@@ -375,7 +375,7 @@ for (i = 1; i < (guestsSelect.length); i++) {
 
 var onRoomSelectClick = function () {
   // Количество комнат прямопропорционально количеству гостей
-  for (i = 0; i <= guestsSelect.length - 1; i++) {
+  for (i = 0; i < guestsSelect.length; i++) {
     guestsSelect.options[i].disabled = false;
     if (i > roomSelect.selectedIndex) {
       guestsSelect.options[i].disabled = true;
