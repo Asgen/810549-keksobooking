@@ -296,19 +296,6 @@ var makeAllFormsDisable = function (status) {
   disableIt(selects, status);
 };
 
-// Функция добавления/удаления класса
-var chacngeClass = function (elementClass, classToChange, addOrRemove) {
-  var element = document.querySelector(elementClass);
-  switch (addOrRemove) {
-    case 'add':
-      element.classList.add(classToChange);
-      break;
-    case 'remove':
-      element.classList.remove(classToChange);
-      break;
-  }
-};
-
 // Деактивируем все поля
 makeAllFormsDisable(true);
 
@@ -322,9 +309,11 @@ var onResetButtonClick = function (evt) {
   evt.preventDefault();
 
   // Блокирует карту
-  chacngeClass('.map', 'map--faded', 'add');
+  var map = document.querySelector('.map');
+  map.classList.add('map--faded');
+
   // Блокирует форму
-  chacngeClass('.ad-form', 'ad-form--disabled', 'add');
+  adForm.classList.add('ad-form--disabled');
   // Блокирует поля
   makeAllFormsDisable(true);
   // Удаляет все отрисованные метки
@@ -338,11 +327,11 @@ var onResetButtonClick = function (evt) {
     openedCard.remove();
   }
 
+  // Сбрасывает форму и скролит вверх страницы
   adForm.reset();
   document.documentElement.scrollTop = 0;
 
   // Ставит метку посередине карты
-  var map = document.querySelector('.map');
   pinListo[0].style.top = map.offsetHeight / 2 + 'px';
   pinListo[0].style.left = (map.offsetWidth / 2) - (PIN_MAIN_WIDTH / 2) + 'px';
   // Прописывает адрес
@@ -379,13 +368,13 @@ timeFieldset.addEventListener('click', function (event) {
 var roomSelect = document.querySelector('#room-number');
 var guestsSelect = document.querySelector('#capacity');
 
-for (var i = 1; i < (guestsSelect.length); i++) {
-      guestsSelect.options[i].disabled = true;
-    }
+for (i = 1; i < (guestsSelect.length); i++) {
+  guestsSelect.options[i].disabled = true;
+}
 
-roomSelect.addEventListener('click', function (event) {
+roomSelect.addEventListener('click', function () {
   // Количество комнат прямопропорционально количеству гостей
-  for (var i = 0; i <= roomSelect.selectedIndex; i++) {
+  for (i = 0; i <= roomSelect.selectedIndex; i++) {
     guestsSelect.options[i].disabled = false;
     guestsSelect.selectedIndex = roomSelect.selectedIndex;
     for (var j = (guestsSelect.length - 1); j > i; j--) {
@@ -394,7 +383,7 @@ roomSelect.addEventListener('click', function (event) {
   }
   // Частный случай с 100 комнат
   if (roomSelect.value === '100') {
-    for (var i = 0; i <= roomSelect.length - 1; i++) {
+    for (i = 0; i <= roomSelect.length - 1; i++) {
       guestsSelect.options[i].disabled = true;
     }
     guestsSelect.options[guestsSelect.length - 1].disabled = false;
@@ -481,9 +470,9 @@ roomSelect.addEventListener('click', function (event) {
         var pinList = document.querySelectorAll('.map__pin');
         if (pinList.length < 2) {
           // Удаляет класс карты
-          chacngeClass('.map', 'map--faded', 'remove');
+          document.querySelector('.map').classList.remove('map--faded');
           // Удаляет класс формы
-          chacngeClass('.ad-form', 'ad-form--disabled', 'remove');
+          document.querySelector('.ad-form').classList.remove('ad-form--disabled');
           // Активирует формы
           makeAllFormsDisable(false);
           // Отрисовка Меток на карте
