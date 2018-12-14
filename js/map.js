@@ -330,6 +330,7 @@ var onResetButtonClick = function (evt) {
   // Сбрасывает форму и скролит вверх страницы
   adForm.reset();
   document.documentElement.scrollTop = 0;
+  onRoomSelectClick();
 
   // Ставит метку посередине карты
   pinListo[0].style.top = map.offsetHeight / 2 + 'px';
@@ -372,7 +373,7 @@ for (i = 1; i < (guestsSelect.length); i++) {
   guestsSelect.options[i].disabled = true;
 }
 
-roomSelect.addEventListener('click', function () {
+var onRoomSelectClick = function () {
   // Количество комнат прямопропорционально количеству гостей
   for (i = 0; i <= roomSelect.selectedIndex; i++) {
     guestsSelect.options[i].disabled = false;
@@ -389,8 +390,8 @@ roomSelect.addEventListener('click', function () {
     guestsSelect.options[guestsSelect.length - 1].disabled = false;
     guestsSelect.selectedIndex = roomSelect.selectedIndex;
   }
-
-});
+};
+roomSelect.addEventListener('click', onRoomSelectClick);
 // --------------------------------------------валидация формы
 
 // Перетаскивание главной метки
