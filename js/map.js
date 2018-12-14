@@ -296,21 +296,10 @@ var makeAllFormsDisable = function (status) {
   disableIt(selects, status);
 };
 
-// Функция добавления/удаления класса
-var chacngeClass = function (elementClass, classToChange, addOrRemove) {
-  var element = document.querySelector(elementClass);
-  switch (addOrRemove) {
-    case 'add':
-      element.classList.add(classToChange);
-      break;
-    case 'remove':
-      element.classList.remove(classToChange);
-      break;
-  }
-};
-
 // Деактивируем все поля
 makeAllFormsDisable(true);
+
+// Валидация формы--------------------------------------------
 
 // Кнопка reset
 var adForm = document.querySelector('.ad-form');
@@ -320,9 +309,11 @@ var onResetButtonClick = function (evt) {
   evt.preventDefault();
 
   // Блокирует карту
-  chacngeClass('.map', 'map--faded', 'add');
+  var map = document.querySelector('.map');
+  map.classList.add('map--faded');
+
   // Блокирует форму
-  chacngeClass('.ad-form', 'ad-form--disabled', 'add');
+  adForm.classList.add('ad-form--disabled');
   // Блокирует поля
   makeAllFormsDisable(true);
   // Удаляет все отрисованные метки
@@ -336,17 +327,19 @@ var onResetButtonClick = function (evt) {
     openedCard.remove();
   }
 
+  // Сбрасывает форму и скролит вверх страницы
+  adForm.reset();
+  document.documentElement.scrollTop = 0;
+  onRoomSelectClick();
+
   // Ставит метку посередине карты
-  pinListo[0].style.top = window.innerHeight / 2 + 'px';
-  pinListo[0].style.left = (WIDTH_MAX - PIN_WIDTH) / 2 + 'px';
+  pinListo[0].style.top = map.offsetHeight / 2 + 'px';
+  pinListo[0].style.left = (map.offsetWidth / 2) - (PIN_MAIN_WIDTH / 2) + 'px';
   // Прописывает адрес
   var address = document.querySelector('#address');
   address.value = pinListo[0].offsetLeft + ',' + pinListo[0].offsetTop;
 };
-
 resetButton.addEventListener('click', onResetButtonClick);
-
-// Валидация формы--------------------------------------------
 
 // Зависимость минимальной цены от типа
 var priceInput = document.querySelector('#price');
@@ -374,47 +367,27 @@ timeFieldset.addEventListener('click', function (event) {
 
 // Количество гостей зависит от количества комнат
 var roomSelect = document.querySelector('#room-number');
+var guestsSelect = document.querySelector('#capacity');
 
-var onlyGuest = document.querySelector('.ad-form__option--1-guest');
-var twoGuests = document.querySelector('.ad-form__option--2-guests');
-var threeGuests = document.querySelector('.ad-form__option--3-guests');
-var noGuests = document.querySelector('.ad-form__option--no-guests');
+for (i = 1; i < (guestsSelect.length); i++) {
+  guestsSelect.options[i].disabled = true;
+}
 
-onlyGuest.disabled = false;
-noGuests.disabled = true;
-threeGuests.disabled = true;
-twoGuests.disabled = true;
-
-roomSelect.addEventListener('click', function (event) {
-  var target = event.target;
-
-  switch (target.selectedIndex) {
-    case 0:
-      onlyGuest.disabled = false;
-      noGuests.disabled = true;
-      threeGuests.disabled = true;
-      twoGuests.disabled = true;
-      break;
-    case 1:
-      onlyGuest.disabled = false;
-      noGuests.disabled = true;
-      threeGuests.disabled = true;
-      twoGuests.disabled = false;
-      break;
-    case 2:
-      onlyGuest.disabled = false;
-      noGuests.disabled = true;
-      threeGuests.disabled = false;
-      twoGuests.disabled = false;
-      break;
-    case 3:
-      onlyGuest.disabled = true;
-      noGuests.disabled = false;
-      threeGuests.disabled = true;
-      twoGuests.disabled = true;
-      break;
+var onRoomSelectClick = function () {
+  // Количество комнат прямопропорционально количеству гостей
+  for (i = 0; i < guestsSelect.length; i++) {
+    guestsSelect.options[i].disabled = false;
+    if (i > roomSelect.selectedIndex) {
+      guestsSelect.options[i].disabled = true;
+    }
+    if (roomSelect.selectedIndex === 3) {
+      guestsSelect.options[i].disabled = true;
+      guestsSelect.options[3].disabled = false;
+    }
+    guestsSelect.selectedIndex = roomSelect.selectedIndex;
   }
-});
+};
+roomSelect.addEventListener('click', onRoomSelectClick);
 // --------------------------------------------валидация формы
 
 // Перетаскивание главной метки
@@ -473,7 +446,6 @@ roomSelect.addEventListener('click', function (event) {
         mainPinPositionX = WIDTH_MAX - PIN_MAIN_WIDTH;
       }
 
-
       // Задает позицию метки
       pinMainHandle.style.top = mainPinPositionY + 'px';
       pinMainHandle.style.left = mainPinPositionX + 'px';
@@ -495,9 +467,9 @@ roomSelect.addEventListener('click', function (event) {
         var pinList = document.querySelectorAll('.map__pin');
         if (pinList.length < 2) {
           // Удаляет класс карты
-          chacngeClass('.map', 'map--faded', 'remove');
+          document.querySelector('.map').classList.remove('map--faded');
           // Удаляет класс формы
-          chacngeClass('.ad-form', 'ad-form--disabled', 'remove');
+          document.querySelector('.ad-form').classList.remove('ad-form--disabled');
           // Активирует формы
           makeAllFormsDisable(false);
           // Отрисовка Меток на карте
