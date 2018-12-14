@@ -373,21 +373,17 @@ for (i = 1; i < (guestsSelect.length); i++) {
   guestsSelect.options[i].disabled = true;
 }
 
-var onRoomSelectClick = function () {
+var onRoomSelectClick = function (evt) {
   // Количество комнат прямопропорционально количеству гостей
-  for (i = 0; i <= roomSelect.selectedIndex; i++) {
+  for (i = 0; i <= guestsSelect.length - 1; i++) {
     guestsSelect.options[i].disabled = false;
-    guestsSelect.selectedIndex = roomSelect.selectedIndex;
-    for (var j = (guestsSelect.length - 1); j > i; j--) {
-      guestsSelect.options[j].disabled = true;
-    }
-  }
-  // Частный случай с 100 комнат
-  if (roomSelect.value === '100') {
-    for (i = 0; i <= roomSelect.length - 1; i++) {
+    if (i > this.selectedIndex) {
+      guestsSelect.options[i].disabled = true;    }
+
+    if (this.selectedIndex === 3) {
       guestsSelect.options[i].disabled = true;
+      guestsSelect.options[3].disabled = false;
     }
-    guestsSelect.options[guestsSelect.length - 1].disabled = false;
     guestsSelect.selectedIndex = roomSelect.selectedIndex;
   }
 };
