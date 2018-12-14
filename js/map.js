@@ -388,7 +388,7 @@ var onRoomSelectClick = function () {
   }
 };
 roomSelect.addEventListener('click', onRoomSelectClick);
-// --------------------------------------------валидация формы
+// -------------------------------------------валидация формы
 
 // Перетаскивание главной метки
 (function () {
