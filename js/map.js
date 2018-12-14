@@ -338,6 +338,9 @@ var onResetButtonClick = function (evt) {
     openedCard.remove();
   }
 
+  adForm.reset();
+  document.documentElement.scrollTop = 0;
+
   // Ставит метку посередине карты
   var map = document.querySelector('.map');
   pinListo[0].style.top = map.offsetHeight / 2 + 'px';
@@ -376,13 +379,15 @@ timeFieldset.addEventListener('click', function (event) {
 var roomSelect = document.querySelector('#room-number');
 var guestsSelect = document.querySelector('#capacity');
 
-guestsSelect.options.disabled = true;
-guestsSelect.options[0].disabled = false;
+for (var i = 1; i < (guestsSelect.length); i++) {
+      guestsSelect.options[i].disabled = true;
+    }
 
 roomSelect.addEventListener('click', function (event) {
   // Количество комнат прямопропорционально количеству гостей
   for (var i = 0; i <= roomSelect.selectedIndex; i++) {
     guestsSelect.options[i].disabled = false;
+    guestsSelect.selectedIndex = roomSelect.selectedIndex;
     for (var j = (guestsSelect.length - 1); j > i; j--) {
       guestsSelect.options[j].disabled = true;
     }
@@ -393,6 +398,7 @@ roomSelect.addEventListener('click', function (event) {
       guestsSelect.options[i].disabled = true;
     }
     guestsSelect.options[guestsSelect.length - 1].disabled = false;
+    guestsSelect.selectedIndex = roomSelect.selectedIndex;
   }
 
 });
