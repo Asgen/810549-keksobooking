@@ -373,14 +373,14 @@ for (i = 1; i < (guestsSelect.length); i++) {
   guestsSelect.options[i].disabled = true;
 }
 
-var onRoomSelectClick = function (evt) {
+var onRoomSelectClick = function () {
   // Количество комнат прямопропорционально количеству гостей
   for (i = 0; i <= guestsSelect.length - 1; i++) {
     guestsSelect.options[i].disabled = false;
-    if (i > this.selectedIndex) {
-      guestsSelect.options[i].disabled = true;    }
-
-    if (this.selectedIndex === 3) {
+    if (i > roomSelect.selectedIndex) {
+      guestsSelect.options[i].disabled = true;
+    }
+    if (roomSelect.selectedIndex === 3) {
       guestsSelect.options[i].disabled = true;
       guestsSelect.options[3].disabled = false;
     }
