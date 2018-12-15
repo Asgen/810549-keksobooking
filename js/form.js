@@ -1,7 +1,7 @@
 'use strict';
 (function () {
   // Функция активации/деактивации полей ввода
-  // принимает true or false
+  // принимает true или false
   var makeAllFormsDisable = function (status) {
     var fieldsets = document.querySelectorAll('fieldset');
     var selects = document.querySelectorAll('.map__filters select');
