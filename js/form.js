@@ -114,5 +114,5 @@
   };
   roomSelect.addEventListener('click', onRoomSelectClick);
 
-  window.form = makeAllFormsDisable;
+  window.formToggle = makeAllFormsDisable;
 })();

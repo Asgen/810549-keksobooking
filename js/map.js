@@ -81,7 +81,7 @@
           // Удаляет класс формы
           document.querySelector('.ad-form').classList.remove('ad-form--disabled');
           // Активирует формы
-          window.form(false);
+          window.formToggle(false);
           // Отрисовка Меток на карте
           window.renderPins(window.data.objects, '.map__pins', '#pin', '.map__pin');
         }
