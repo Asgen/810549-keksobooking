@@ -144,6 +144,6 @@
     WIDTH_MAX: WIDTH_MAX,
     CARD_PIC_HEIGHT: CARD_PIC_HEIGHT,
     CARD_PIC_WIDTH: CARD_PIC_WIDTH,
-    objects: objects
+    //objects: objects
   };
 })();
