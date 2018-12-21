@@ -59,7 +59,7 @@
 
     // Ставит метку посередине карты
     pinListo[0].style.top = map.offsetHeight / 2 + 'px';
-    pinListo[0].style.left = (map.offsetWidth / 2) - (window.data.PIN_MAIN_WIDTH / 2) + 'px';
+    pinListo[0].style.left = (map.offsetWidth / 2) - (window.data.consts.PIN_MAIN_WIDTH / 2) + 'px';
     // Прописывает адрес
     var address = document.querySelector('#address');
     address.value = pinListo[0].offsetLeft + ',' + pinListo[0].offsetTop;
@@ -114,5 +114,31 @@
   };
   roomSelect.addEventListener('click', onRoomSelectClick);
 
-  window.formToggle = makeAllFormsDisable;
+  // Отправка формы------
+
+  //Callback при успешной отправке
+  var onSuccessSend = function (xhr, evt) {
+    // Переход в неактивное состояние при успешной отправке
+    console.log('Данные отправлены.' + ' ' + 'Ответ серевера:' + ' ' + xhr.status);
+    onResetButtonClick(evt);
+    // Показывает сообщение об успешной отправке (логика закрытия внутри)
+    window.data.funcs.showMessage('#success', '.success', 'main');
+  };
+
+  // Callback при ошибке
+  var onErrorSend = function () {
+    // Показывает сообщение об ошибке отправки (логика закрытия внутри)
+    window.data.funcs.showMessage('#error', '.error', 'main');
+  };
+
+  adForm.addEventListener('submit', function (evt) {
+    window.upload(new FormData(adForm), onSuccessSend, onErrorSend);
+    evt.preventDefault();
+  });
+
+
+  window.formToggle = {
+    toggle: makeAllFormsDisable,
+    onResetButtonClick: onResetButtonClick
+  };
 })();

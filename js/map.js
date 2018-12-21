@@ -44,16 +44,16 @@
       var mainPinPositionX = positionX;
 
       // Позиции метки в крайних точках
-      if (mainPinPositionY < window.data.HEIGHT_MIN - window.data.PIN_HEIGHT) {
-        mainPinPositionY = window.data.HEIGHT_MIN - window.data.PIN_HEIGHT;
-      } else if (mainPinPositionY > window.data.HEIGHT_MAX - window.data.PIN_HEIGHT) {
-        mainPinPositionY = window.data.HEIGHT_MAX - window.data.PIN_HEIGHT;
+      if (mainPinPositionY < window.data.consts.HEIGHT_MIN - window.data.consts.PIN_HEIGHT) {
+        mainPinPositionY = window.data.consts.HEIGHT_MIN - window.data.consts.PIN_HEIGHT;
+      } else if (mainPinPositionY > window.data.consts.HEIGHT_MAX - window.data.consts.PIN_HEIGHT) {
+        mainPinPositionY = window.data.consts.HEIGHT_MAX - window.data.consts.PIN_HEIGHT;
       }
       while (mainPinPositionX < 0) {
         mainPinPositionX = 0;
       }
-      while (mainPinPositionX > window.data.WIDTH_MAX - window.data.PIN_MAIN_WIDTH) {
-        mainPinPositionX = window.data.WIDTH_MAX - window.data.PIN_MAIN_WIDTH;
+      while (mainPinPositionX > window.data.consts.WIDTH_MAX - window.data.consts.PIN_MAIN_WIDTH) {
+        mainPinPositionX = window.data.consts.WIDTH_MAX - window.data.consts.PIN_MAIN_WIDTH;
       }
 
       // Задает позицию метки
@@ -62,7 +62,7 @@
 
       // Устанавливает адрес во время перетаскивания
       var addressX = mainPinPositionX;
-      var addressY = mainPinPositionY + window.data.PIN_HEIGHT;
+      var addressY = mainPinPositionY + window.data.consts.PIN_HEIGHT;
       address.value = addressX + ',' + addressY;
     };
 
@@ -75,15 +75,17 @@
       // Если было перетаскивание
       if (dragged) {
         var pinList = document.querySelectorAll('.map__pin');
+
+        // Если меток на карте нет, то
         if (pinList.length < 2) {
+          // Скачивает данные и при успехе вызывает onSuccessGet, которая отрисовывает метки
+          window.load(window.data.funcs.onSuccessGet, window.data.funcs.onErrorGet);
           // Удаляет класс карты
           document.querySelector('.map').classList.remove('map--faded');
           // Удаляет класс формы
           document.querySelector('.ad-form').classList.remove('ad-form--disabled');
           // Активирует формы
-          window.formToggle(false);
-          // Отрисовка Меток на карте
-          window.renderPins(window.data.objects, '.map__pins', '#pin', '.map__pin');
+          window.formToggle.toggle(false);
         }
       }
     };
