@@ -116,10 +116,10 @@
 
   // Отправка формы------
 
-  //Callback при успешной отправке
+  // Callback при успешной отправке
   var onSuccessSend = function (xhr, evt) {
     // Переход в неактивное состояние при успешной отправке
-    console.log('Данные отправлены.' + ' ' + 'Ответ серевера:' + ' ' + xhr.status);
+  //  console.log('Данные отправлены.' + ' ' + 'Ответ серевера:' + ' ' + xhr.status);
     onResetButtonClick(evt);
     // Показывает сообщение об успешной отправке (логика закрытия внутри)
     window.data.funcs.showMessage('#success', '.success', 'main');

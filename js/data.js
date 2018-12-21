@@ -1,7 +1,7 @@
 'use strict';
 (function () {
   // Количество генерируемых объектов
-  //var OBJECTS_QUANTITY = 8;
+  // var OBJECTS_QUANTITY = 8;
 
   // Размеры Метки
   var PIN_WIDTH = 50;
@@ -16,14 +16,6 @@
   // Размеры фото в карточке
   var CARD_PIC_WIDTH = 45;
   var CARD_PIC_HEIGHT = 40;
-
-  // Параметры
-  var PRICE_MIN = 1000;
-  var PRICE_MAX = 1000000;
-  var ROOMS_MIN = 1;
-  var ROOMS_MAX = 6;
-  var GUESTS_MIN = 1;
-  var GUESTS_MAX = 50;
 
   // Коды клавиш
   var ESC_KEYCODE = 27;
@@ -146,16 +138,16 @@
   var onEscRemove = function (element) {
     document.addEventListener('keydown', function (evt) {
       if (evt.keyCode === window.data.consts.ESC_KEYCODE) {
-          element.remove();
-        }
-    })
+        element.remove();
+      }
+    });
   };
 
   // Функция удаления элемента по клику
   var onClickRemoveThis = function (element) {
     element.addEventListener('click', function () {
       element.remove();
-    })
+    });
   };
 
   // Функция отрисовки сообщения из шаблона
@@ -173,7 +165,7 @@
 
   // Callback функция при успешной загрузке данных
   var onSuccessGet = function (xhr) {
-    console.log('Скачал данные.' + ' ' + 'Ответ серевера:' + ' ' + xhr.status);
+  //  console.log('Скачал данные.' + ' ' + 'Ответ серевера:' + ' ' + xhr.status);
     window.data.objects = xhr.response;
     // Отрисовка Меток на карте
     window.renderPins(window.data.objects, '.map__pins', '#pin', '.map__pin');
@@ -181,7 +173,7 @@
 
   // Callback функция при ошибке загрузки данных
   var onErrorGet = function () {
-    console.log('ошибка получения данных');
+  //  console.log('ошибка получения данных');
   };
 
 
@@ -207,6 +199,6 @@
       onErrorGet: onErrorGet
     }
 
-    //objects: []  mockData was here
+    // objects: []  mockData was here
   };
 })();
