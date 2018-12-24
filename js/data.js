@@ -1,7 +1,7 @@
 'use strict';
 (function () {
-  // Количество генерируемых объектов
-  // var OBJECTS_QUANTITY = 8;
+  // Максимльное количество меток на карте
+  var PINS_QUANTITY = 5;
 
   // Размеры Метки
   var PIN_WIDTH = 50;
@@ -172,13 +172,15 @@
   };
 
   // Callback функция при ошибке загрузки данных
-  var onErrorGet = function () {
-  //  console.log('ошибка получения данных');
+  var onError = function () {
+    // Показывает сообщение об ошибке отправки (логика закрытия внутри)
+    window.data.funcs.showMessage('#error', '.error', 'main');
   };
 
 
   window.data = {
     consts: {
+      PINS_QUANTITY: PINS_QUANTITY,
       PIN_WIDTH: PIN_WIDTH,
       PIN_HEIGHT: PIN_HEIGHT,
       PIN_MAIN_WIDTH: PIN_MAIN_WIDTH,
@@ -196,7 +198,7 @@
       onClickRemoveThis: onClickRemoveThis,
       showMessage: showMessage,
       onSuccessGet: onSuccessGet,
-      onErrorGet: onErrorGet
+      onError: onError
     }
 
     // objects: []  mockData was here

@@ -38,8 +38,8 @@
     };
     // --------------------------------
 
-    // Создание метки, только если не присутствует свойство offer
-    for (var i = 0; i < dataArr.length; i++) {
+    // Создание метки, только если присутствует свойство offer
+    for (var i = 0; i < window.data.consts.PINS_QUANTITY; i++) {
       if (dataArr[i].offer) {
         var pinElement = pinTemplate.cloneNode(true);
         var pinPositionX = (dataArr[i].location.x <= window.data.consts.PIN_WIDTH) ? dataArr[i].location.x : dataArr[i].location.x - window.data.consts.PIN_WIDTH;

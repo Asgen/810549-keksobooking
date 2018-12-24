@@ -1,42 +1,30 @@
 'use strict';
 (function () {
-  // Экспорт функции скачивания данных
-  window.load = function (onSuccess, onError) {
-    var xhr = new XMLHttpRequest();
-    xhr.responseType = 'json';
-
-    xhr.addEventListener('load', function () {
-      onSuccess(xhr);
-    });
-
-    xhr.addEventListener('error', function () {
-      onError(xhr);
-    });
-
-    xhr.open('GET', 'https://js.dump.academy/keksobooking/data');
-
-    xhr.timeout = 1000;
-    xhr.addEventListener('timeout', function () {
-      onError(xhr);
-    });
-
-    xhr.send();
-  };
-
-  // Экспорт функции отправки дынных
-  window.upload = function (data, onSuccess, onError) {
+  // Экспорт функции запроса на сервер
+  window.xhrRequest = function (url, method, onSuccess, onError, data) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function (evt) {
-      onSuccess(xhr, evt);
-    });
+        onSuccess(xhr, evt);
+      });
 
-    xhr.addEventListener('error', function () {
-      onError();
-    });
+      xhr.addEventListener('error', function () {
+        onError(xhr);
+      });
 
-    xhr.open('POST', 'https://js.dump.academy/keksobooking');
-    xhr.send(data);
+      xhr.open(method, url);
+
+      xhr.timeout = 2000;
+      xhr.addEventListener('timeout', function () {
+        onError(xhr);
+      });
+
+      if (data) {
+        xhr.send(data);
+      }
+      else {
+        xhr.send();
+    }
   };
 })();
