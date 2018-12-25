@@ -20,12 +20,8 @@
       onError(xhr);
     });
 
-    var body = data;
+    data = data || '';
 
-    if (!body) {
-      body = '';
-    }
-
-    xhr.send(body);
+    xhr.send(data);
   };
 })();
