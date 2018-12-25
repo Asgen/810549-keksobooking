@@ -59,7 +59,7 @@
 
     // Ставит метку посередине карты
     pinListo[0].style.top = map.offsetHeight / 2 + 'px';
-    pinListo[0].style.left = (map.offsetWidth / 2) - (window.data.PIN_MAIN_WIDTH / 2) + 'px';
+    pinListo[0].style.left = (map.offsetWidth / 2) - (window.data.consts.PIN_MAIN_WIDTH / 2) + 'px';
     // Прописывает адрес
     var address = document.querySelector('#address');
     address.value = pinListo[0].offsetLeft + ',' + pinListo[0].offsetTop;
@@ -114,5 +114,24 @@
   };
   roomSelect.addEventListener('click', onRoomSelectClick);
 
-  window.form = makeAllFormsDisable;
+  // Отправка формы------
+
+  // Callback при успешной отправке
+  var onSuccessSend = function (xhr, evt) {
+  // Переход в неактивное состояние при успешной отправке
+    onResetButtonClick(evt);
+    // Показывает сообщение об успешной отправке (логика закрытия внутри)
+    window.data.funcs.showMessage('#success', '.success', 'main');
+  };
+
+  adForm.addEventListener('submit', function (evt) {
+    window.xhrRequest('https://js.dump.academy/keksobooking', 'POST', onSuccessSend, window.data.funcs.onError, new FormData(adForm));
+    evt.preventDefault();
+  });
+
+
+  window.formToggle = {
+    toggle: makeAllFormsDisable,
+    onResetButtonClick: onResetButtonClick
+  };
 })();

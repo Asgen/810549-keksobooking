@@ -38,19 +38,22 @@
     };
     // --------------------------------
 
-    for (var i = 0; i < dataArr.length; i++) {
-      var pinElement = pinTemplate.cloneNode(true);
-      var pinPositionX = (dataArr[i].location.x <= window.data.PIN_WIDTH) ? dataArr[i].location.x : dataArr[i].location.x - window.data.PIN_WIDTH;
-      var pinPositionY = (dataArr[i].location.y <= window.data.PIN_HEIGHT) ? dataArr[i].location.y - window.data.PIN_HEIGHT / 2 : dataArr[i].location.y;
-      pinElement.style.left = pinPositionX + 'px';
-      pinElement.style.top = pinPositionY + 'px';
-      var pinAvatar = pinElement.firstChild;
-      pinAvatar.src = dataArr[i].author.avatar;
+    // Создание метки, только если присутствует свойство offer
+    for (var i = 0; i < window.data.consts.PINS_QUANTITY; i++) {
+      if (dataArr[i].offer) {
+        var pinElement = pinTemplate.cloneNode(true);
+        var pinPositionX = (dataArr[i].location.x <= window.data.consts.PIN_WIDTH) ? dataArr[i].location.x : dataArr[i].location.x - window.data.consts.PIN_WIDTH;
+        var pinPositionY = (dataArr[i].location.y <= window.data.consts.PIN_HEIGHT) ? dataArr[i].location.y - window.data.consts.PIN_HEIGHT / 2 : dataArr[i].location.y;
+        pinElement.style.left = pinPositionX + 'px';
+        pinElement.style.top = pinPositionY + 'px';
+        var pinAvatar = pinElement.firstChild;
+        pinAvatar.src = dataArr[i].author.avatar;
 
-      onPinClick(pinElement, window.data.objects[i]);
+        onPinClick(pinElement, dataArr[i]);
 
-      // Добавление в список
-      fragmentPins.appendChild(pinElement);
+        // Добавление в список
+        fragmentPins.appendChild(pinElement);
+      }
     }
     // Добавляет фрагмент с метками в список меток
     pinListElement.appendChild(fragmentPins);
