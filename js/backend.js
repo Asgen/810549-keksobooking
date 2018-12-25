@@ -6,25 +6,26 @@
     xhr.responseType = 'json';
 
     xhr.addEventListener('load', function (evt) {
-        onSuccess(xhr, evt);
-      });
+      onSuccess(xhr, evt);
+    });
 
-      xhr.addEventListener('error', function () {
-        onError(xhr);
-      });
+    xhr.addEventListener('error', function () {
+      onError(xhr);
+    });
 
-      xhr.open(method, url);
+    xhr.open(method, url);
 
-      xhr.timeout = 2000;
-      xhr.addEventListener('timeout', function () {
-        onError(xhr);
-      });
+    xhr.timeout = 2000;
+    xhr.addEventListener('timeout', function () {
+      onError(xhr);
+    });
 
-      if (data) {
-        xhr.send(data);
-      }
-      else {
-        xhr.send();
+    var body = data;
+
+    if (!body) {
+      body = '';
     }
+
+    xhr.send(body);
   };
 })();

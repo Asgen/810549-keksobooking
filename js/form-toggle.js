@@ -119,14 +119,12 @@
   // Callback при успешной отправке
   var onSuccessSend = function (xhr, evt) {
   // Переход в неактивное состояние при успешной отправке
-  //  console.log('Данные отправлены.' + ' ' + 'Ответ серевера:' + ' ' + xhr.status);
     onResetButtonClick(evt);
     // Показывает сообщение об успешной отправке (логика закрытия внутри)
     window.data.funcs.showMessage('#success', '.success', 'main');
   };
 
   adForm.addEventListener('submit', function (evt) {
-    //window.upload(new FormData(adForm), onSuccessSend, onErrorSend);
     window.xhrRequest('https://js.dump.academy/keksobooking', 'POST', onSuccessSend, window.data.funcs.onError, new FormData(adForm));
     evt.preventDefault();
   });

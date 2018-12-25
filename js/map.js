@@ -79,10 +79,7 @@
         // Если меток на карте нет, то
         if (pinList.length < 2) {
           // Скачивает данные и при успехе вызывает onSuccessGet, которая отрисовывает метки
-          //window.load(window.data.funcs.onSuccessGet, window.data.funcs.onErrorGet);
-
           window.xhrRequest('https://js.dump.academy/keksobooking/data', 'GET', window.data.funcs.onSuccessGet, window.data.funcs.onError);
-
           // Удаляет класс карты
           document.querySelector('.map').classList.remove('map--faded');
           // Удаляет класс формы
