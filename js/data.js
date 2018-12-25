@@ -1,8 +1,5 @@
 'use strict';
 (function () {
-  // Максимльное количество меток на карте
-  var PINS_QUANTITY = 5;
-
   // Размеры Метки
   var PIN_WIDTH = 50;
   var PIN_HEIGHT = 70;
@@ -66,7 +63,6 @@
 
   window.data = {
     consts: {
-      PINS_QUANTITY: PINS_QUANTITY,
       PIN_WIDTH: PIN_WIDTH,
       PIN_HEIGHT: PIN_HEIGHT,
       PIN_MAIN_WIDTH: PIN_MAIN_WIDTH,
