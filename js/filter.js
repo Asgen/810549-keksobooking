@@ -5,30 +5,47 @@ var price = filtersForm.querySelector('#housing-price');
 var rooms = filtersForm.querySelector('#housing-rooms');
 var guests = filtersForm.querySelector('#housing-guests');
 var features = filtersForm.querySelector('#housing-features');
+var checkboxes = features.querySelectorAll('input[type="checkbox"]');
 
 var filterIt = function (it, evt) {
-  // Опции
 
-  filter-wifi
+  // Опции
+  var filterFeaturesList = it.offer.features;
+  var checkedFeatures = [];
+  for (var i = 0; i < checkboxes.length; i++) {
+    if(checkboxes[i].checked) {
+      checkedFeatures.push(checkboxes[i].value);
+    }
+  }
+
+  if (checkedFeatures.length > 0) {
+    filterFeaturesList = checkedFeatures;
+  }
+
+  console.log(filterFeaturesList);
+  console.log(it.offer.features);
+
+  //filterFeaturesList === it.offer.features
+  /*filter-wifi
   filter-dishwasher
   filter-parking
   filter-washer
   filter-elevator
-  filter-conditioner
+  filter-conditioner*/
 
   var checkFeatures;
   switch (rooms.value) {
     case '1':
-      roomsQuantity = 1;
+      checkFeatures = 1;
       break;
     case '2':
-      roomsQuantity = 2;
+      checkFeatures = 2;
       break;
     case '3':
-      roomsQuantity = 3;
+      checkFeatures = 3;
       break;
     case 'any':
-      roomsQuantity = it.offer.rooms;
+      checkFeatures = it.offer.rooms;
       break;
   }
 
@@ -88,12 +105,12 @@ var filterIt = function (it, evt) {
   }
 
   // Тип жилья 'any' + остальные параметры
-  if (type.value === 'any' && it.offer.price >= minPrice && it.offer.price < maxPrice && it.offer.rooms === roomsQuantity && it.offer.guests === capacity) {
+  if (type.value === 'any' && it.offer.price >= minPrice && it.offer.price < maxPrice && it.offer.rooms === roomsQuantity && it.offer.guests === capacity && filterFeaturesList.join() === it.offer.features.join()) {
     return true
   }
 
   // Остальной тип жилья + остальные параметры
-  if (it.offer.price >= minPrice && it.offer.price < maxPrice && it.offer.type === type.value && it.offer.rooms === roomsQuantity && it.offer.guests === capacity) {
+  if (it.offer.price >= minPrice && it.offer.price < maxPrice && it.offer.type === type.value && it.offer.rooms === roomsQuantity && it.offer.guests === capacity && filterFeaturesList.join() === it.offer.features.join()) {
     return true
   }
 
