@@ -44,16 +44,16 @@
       var mainPinPositionX = positionX;
 
       // Позиции метки в крайних точках
-      if (mainPinPositionY < window.data.consts.HEIGHT_MIN - window.data.consts.PIN_HEIGHT) {
-        mainPinPositionY = window.data.consts.HEIGHT_MIN - window.data.consts.PIN_HEIGHT;
-      } else if (mainPinPositionY > window.data.consts.HEIGHT_MAX - window.data.consts.PIN_HEIGHT) {
-        mainPinPositionY = window.data.consts.HEIGHT_MAX - window.data.consts.PIN_HEIGHT;
+      if (mainPinPositionY < window.data.Size.HEIGHT_MIN - window.data.Size.PIN_HEIGHT) {
+        mainPinPositionY = window.data.Size.HEIGHT_MIN - window.data.Size.PIN_HEIGHT;
+      } else if (mainPinPositionY > window.data.Size.HEIGHT_MAX - window.data.Size.PIN_HEIGHT) {
+        mainPinPositionY = window.data.Size.HEIGHT_MAX - window.data.Size.PIN_HEIGHT;
       }
       while (mainPinPositionX < 0) {
         mainPinPositionX = 0;
       }
-      while (mainPinPositionX > window.data.consts.WIDTH_MAX - window.data.consts.PIN_MAIN_WIDTH) {
-        mainPinPositionX = window.data.consts.WIDTH_MAX - window.data.consts.PIN_MAIN_WIDTH;
+      while (mainPinPositionX > window.data.Size.WIDTH_MAX - window.data.Size.PIN_MAIN_WIDTH) {
+        mainPinPositionX = window.data.Size.WIDTH_MAX - window.data.Size.PIN_MAIN_WIDTH;
       }
 
       // Задает позицию метки
@@ -62,7 +62,7 @@
 
       // Устанавливает адрес во время перетаскивания
       var addressX = mainPinPositionX;
-      var addressY = mainPinPositionY + window.data.consts.PIN_HEIGHT;
+      var addressY = mainPinPositionY + window.data.Size.PIN_HEIGHT;
       address.value = addressX + ',' + addressY;
     };
 

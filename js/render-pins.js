@@ -54,14 +54,14 @@
 
     // Создание метки, только если присутствует свойство offer
     if (dataArr.length > 5) {
-      dataArr = dataArr.slice(5);
+      dataArr = dataArr.slice(0, 5);
     }
 
-    for (var i = 0; i < dataArr.length; i++) {
+    for (i = 0; i < dataArr.length; i++) {
       if (dataArr[i].offer) {
         var pinElement = pinTemplate.cloneNode(true);
-        var pinPositionX = (dataArr[i].location.x <= window.data.consts.PIN_WIDTH) ? dataArr[i].location.x : dataArr[i].location.x - window.data.consts.PIN_WIDTH;
-        var pinPositionY = (dataArr[i].location.y <= window.data.consts.PIN_HEIGHT) ? dataArr[i].location.y - window.data.consts.PIN_HEIGHT / 2 : dataArr[i].location.y;
+        var pinPositionX = (dataArr[i].location.x <= window.data.Size.PIN_WIDTH) ? dataArr[i].location.x : dataArr[i].location.x - window.data.Size.PIN_WIDTH;
+        var pinPositionY = (dataArr[i].location.y <= window.data.Size.PIN_HEIGHT) ? dataArr[i].location.y - window.data.Size.PIN_HEIGHT / 2 : dataArr[i].location.y;
         pinElement.style.left = pinPositionX + 'px';
         pinElement.style.top = pinPositionY + 'px';
         var pinAvatar = pinElement.firstChild;

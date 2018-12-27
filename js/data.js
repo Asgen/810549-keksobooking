@@ -21,7 +21,7 @@
   // Функция удаления элемента по нажатию на Esc
   var onEscRemove = function (element) {
     document.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === window.data.consts.ESC_KEYCODE) {
+      if (evt.keyCode === window.data.KeyCode.ESC_KEYCODE) {
         element.remove();
       }
     });
@@ -62,7 +62,12 @@
 
 
   window.data = {
-    consts: {
+    KeyCode: {
+      ESC_KEYCODE: ESC_KEYCODE,
+      ENTER_KEYCODE: ENTER_KEYCODE
+    },
+
+    Size: {
       PIN_WIDTH: PIN_WIDTH,
       PIN_HEIGHT: PIN_HEIGHT,
       PIN_MAIN_WIDTH: PIN_MAIN_WIDTH,
@@ -70,9 +75,25 @@
       HEIGHT_MAX: HEIGHT_MAX,
       WIDTH_MAX: WIDTH_MAX,
       CARD_PIC_HEIGHT: CARD_PIC_HEIGHT,
-      CARD_PIC_WIDTH: CARD_PIC_WIDTH,
-      ESC_KEYCODE: ESC_KEYCODE,
-      ENTER_KEYCODE: ENTER_KEYCODE
+      CARD_PIC_WIDTH: CARD_PIC_WIDTH
+    },
+
+    AdPrice: {
+      LOW: 10000,
+      MIDDLE: 50000,
+      HIGH: Infinity
+    },
+
+    AdRoom: {
+      ONE: 1,
+      TWO: 2,
+      THREE: 3,
+    },
+
+    AdGuest: {
+      ONE: 1,
+      TWO: 2,
+      NONE: 0,
     },
 
     funcs: {

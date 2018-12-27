@@ -59,7 +59,7 @@
 
     // Ставит метку посередине карты
     pinListo[0].style.top = map.offsetHeight / 2 + 'px';
-    pinListo[0].style.left = (map.offsetWidth / 2) - (window.data.consts.PIN_MAIN_WIDTH / 2) + 'px';
+    pinListo[0].style.left = (map.offsetWidth / 2) - (window.data.Size.PIN_MAIN_WIDTH / 2) + 'px';
     // Прописывает адрес
     var address = document.querySelector('#address');
     address.value = pinListo[0].offsetLeft + ',' + pinListo[0].offsetTop;

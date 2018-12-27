@@ -74,8 +74,8 @@
     if (dataElement.offer.photos.length) {
       for (i = 0; i < dataElement.offer.photos.length; i++) {
         var cardPhoto = makeElement('img', 'popup__photo');
-        cardPhoto.width = window.data.consts.CARD_PIC_WIDTH;
-        cardPhoto.height = window.data.consts.CARD_PIC_HEIGHT;
+        cardPhoto.width = window.data.Size.CARD_PIC_WIDTH;
+        cardPhoto.height = window.data.Size.CARD_PIC_HEIGHT;
         cardPhoto.src = dataElement.offer.photos[i];
 
         cardPhotos.appendChild(cardPhoto);
