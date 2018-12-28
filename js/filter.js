@@ -6,44 +6,18 @@
   var rooms = filtersForm.querySelector('#housing-rooms');
   var guests = filtersForm.querySelector('#housing-guests');
   var features = filtersForm.querySelector('#housing-features');
-  var checkboxes = features.querySelectorAll('input[type="checkbox"]');
-  var currentFeature;
-  var feature;
+  var checkedFeatures;
+  var adFeaturesList;
 
-
-  var isMatches = function (filteredEl, adFeatures) {
-    var y = adFeatures.some(function (it) {
-      return it === filteredEl;
-    });
-    if (y) {
-      currentFeature = true;
-      return true;
-    }
-    currentFeature = false;
-    feature = false;
-    return false;
-  };
+  var typeRs;
+  var priceRs;
+  var roomsRs;
+  var guestsRs;
+  var featuresRs;
 
   var filterIt = function (it) {
-    // Опции
-    var adFeaturesList = it.offer.features;
-    var checkedFeatures = [];
-    for (var i = 0; i < checkboxes.length; i++) {
-      if (checkboxes[i].checked) {
-        checkedFeatures.push(checkboxes[i].value);
-      }
-    }
-
-
-    feature = true;
-    checkedFeatures.forEach(function (filteredElement) {
-      isMatches(filteredElement, adFeaturesList);
-    });
-
-    if (checkedFeatures.length === 0) {
-      currentFeature = true;
-      feature = true;
-    }
+    // Тип
+    typeRs = type.value === 'any' || type.value === it.offer.type;
 
     // Цена
     var minPrice;
@@ -66,51 +40,34 @@
         maxPrice = window.data.AdPrice.HIGH;
         break;
     }
+    priceRs = it.offer.price >= minPrice && it.offer.price < maxPrice;
 
     // Комнаты
-    var roomsQuantity;
-    switch (rooms.value) {
-      case '1':
-        roomsQuantity = window.data.AdRoom.ONE;
-        break;
-      case '2':
-        roomsQuantity = window.data.AdRoom.TWO;
-        break;
-      case '3':
-        roomsQuantity = window.data.AdRoom.THREE;
-        break;
-      case 'any':
-        roomsQuantity = it.offer.rooms;
-        break;
+    roomsRs = true;
+    if (rooms.value !== 'any') {
+      roomsRs = String(it.offer.rooms) === rooms.value;
     }
 
     // Гости
-    var capacity;
-    switch (guests.value) {
-      case '0':
-        capacity = window.data.AdGuest.NONE;
-        break;
-      case '1':
-        capacity = window.data.AdGuest.ONE;
-        break;
-      case '2':
-        capacity = window.data.AdGuest.TWO;
-        break;
-      case 'any':
-        capacity = it.offer.guests;
-        break;
+    guestsRs = true;
+    if (guests.value !== 'any') {
+      guestsRs = String(it.offer.guests) === guests.value;
     }
 
-    // Тип жилья 'any' + остальные параметры
-    if (type.value === 'any' && it.offer.price >= minPrice && it.offer.price < maxPrice && it.offer.rooms === roomsQuantity && it.offer.guests === capacity && currentFeature === true && feature !== false) {
-      return true;
+    // Опции
+    featuresRs = true;
+    adFeaturesList = it.offer.features;
+    checkedFeatures = features.querySelectorAll('input[type="checkbox"]:checked');
+
+    for (var i = 0; i < checkedFeatures.length; i++) {
+      adFeaturesList.indexOf(checkedFeatures[i].value);
+      if (adFeaturesList.indexOf(checkedFeatures[i].value) === -1) {
+        featuresRs = false;
+      }
     }
 
-    // Остальной тип жилья + остальные параметры
-    if (it.offer.price >= minPrice && it.offer.price < maxPrice && it.offer.type === type.value && it.offer.rooms === roomsQuantity && it.offer.guests === capacity && currentFeature === true && feature !== false) {
-      return true;
-    }
-    return false;
+    return typeRs && priceRs && roomsRs && guestsRs && featuresRs;
+
   };
   var lastTimeout;
   var onFilterChange = function () {
