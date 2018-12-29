@@ -15,6 +15,7 @@
   var guestsRs;
   var featuresRs;
 
+  // Функция проверяет входящий объект по всем условиям и возвращает true при успехе
   var filterIt = function (it) {
     // Тип
     typeRs = type.value === 'any' || type.value === it.offer.type;
@@ -69,6 +70,8 @@
     return typeRs && priceRs && roomsRs && guestsRs && featuresRs;
 
   };
+
+  // Callback при изменеии фильров формы с задержкой в полсек.
   var lastTimeout;
   var onFilterChange = function () {
     var newArr = window.data.objects.filter(function (it) {

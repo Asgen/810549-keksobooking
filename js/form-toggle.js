@@ -29,6 +29,7 @@
   // Кнопка reset
   var adForm = document.querySelector('.ad-form');
   var resetButton = adForm.querySelector('.ad-form__reset');
+  var filtersForm = document.querySelector('.map__filters');
 
   var onResetButtonClick = function (evt) {
     evt.preventDefault();
@@ -52,7 +53,8 @@
       openedCard.remove();
     }
 
-    // Сбрасывает форму и скролит вверх страницы
+    // Сбрасывает формы и скролит вверх страницы
+    filtersForm.reset();
     adForm.reset();
     document.documentElement.scrollTop = 0;
     onRoomSelectClick();
