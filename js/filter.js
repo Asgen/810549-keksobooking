@@ -6,21 +6,14 @@
   var rooms = filtersForm.querySelector('#housing-rooms');
   var guests = filtersForm.querySelector('#housing-guests');
   var features = filtersForm.querySelector('#housing-features');
-  var checkedFeatures;
-  var adFeaturesList;
-
-  var typeRs;
-  var priceRs;
-  var roomsRs;
-  var guestsRs;
-  var featuresRs;
 
   // Функция проверяет входящий объект по всем условиям и возвращает true при успехе
   var filterIt = function (it) {
     // Тип
-    typeRs = type.value === 'any' || type.value === it.offer.type;
+    var typeRs = type.value === 'any' || type.value === it.offer.type;
 
     // Цена
+    var priceRs;
     switch (price.value) {
       case 'low':
         priceRs = it.offer.price >= 0 && it.offer.price < window.data.AdPrice.LOW;
@@ -37,21 +30,21 @@
     }
 
     // Комнаты
-    roomsRs = true;
+    var roomsRs = true;
     if (rooms.value !== 'any') {
       roomsRs = String(it.offer.rooms) === rooms.value;
     }
 
     // Гости
-    guestsRs = true;
+    var guestsRs = true;
     if (guests.value !== 'any') {
       guestsRs = it.offer.guests === Number(guests.value);
     }
 
     // Опции
-    featuresRs = true;
-    adFeaturesList = it.offer.features;
-    checkedFeatures = features.querySelectorAll('input[type="checkbox"]:checked');
+    var featuresRs = true;
+    var adFeaturesList = it.offer.features;
+    var checkedFeatures = features.querySelectorAll('input[type="checkbox"]:checked');
 
     for (var i = 0; i < checkedFeatures.length; i++) {
       if (adFeaturesList.indexOf(checkedFeatures[i].value) === -1) {
