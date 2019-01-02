@@ -21,27 +21,20 @@
     typeRs = type.value === 'any' || type.value === it.offer.type;
 
     // Цена
-    var minPrice;
-    var maxPrice;
     switch (price.value) {
       case 'low':
-        minPrice = 0;
-        maxPrice = window.data.AdPrice.LOW;
+        priceRs = it.offer.price >= 0 && it.offer.price < window.data.AdPrice.LOW;
         break;
       case 'middle':
-        minPrice = window.data.AdPrice.LOW;
-        maxPrice = window.data.AdPrice.MIDDLE;
+        priceRs = it.offer.price >= window.data.AdPrice.LOW && it.offer.price < window.data.AdPrice.MIDDLE;
         break;
       case 'high':
-        minPrice = window.data.AdPrice.MIDDLE;
-        maxPrice = window.data.AdPrice.HIGH;
+        priceRs = it.offer.price >= window.data.AdPrice.MIDDLE && it.offer.price < window.data.AdPrice.HIGH;
         break;
       case 'any':
-        minPrice = 0;
-        maxPrice = window.data.AdPrice.HIGH;
+        priceRs = it.offer.price >= 0 && it.offer.price < window.data.AdPrice.HIGH;
         break;
     }
-    priceRs = it.offer.price >= minPrice && it.offer.price < maxPrice;
 
     // Комнаты
     roomsRs = true;
@@ -52,7 +45,7 @@
     // Гости
     guestsRs = true;
     if (guests.value !== 'any') {
-      guestsRs = String(it.offer.guests) === guests.value;
+      guestsRs = it.offer.guests === Number(guests.value);
     }
 
     // Опции
@@ -61,7 +54,6 @@
     checkedFeatures = features.querySelectorAll('input[type="checkbox"]:checked');
 
     for (var i = 0; i < checkedFeatures.length; i++) {
-      adFeaturesList.indexOf(checkedFeatures[i].value);
       if (adFeaturesList.indexOf(checkedFeatures[i].value) === -1) {
         featuresRs = false;
       }
