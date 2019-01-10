@@ -1,8 +1,5 @@
 'use strict';
 (function () {
-  // Максимльное количество меток на карте
-  var PINS_QUANTITY = 5;
-
   // Размеры Метки
   var PIN_WIDTH = 50;
   var PIN_HEIGHT = 70;
@@ -24,7 +21,7 @@
   // Функция удаления элемента по нажатию на Esc
   var onEscRemove = function (element) {
     document.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === window.data.consts.ESC_KEYCODE) {
+      if (evt.keyCode === window.data.KeyCode.ESC_KEYCODE) {
         element.remove();
       }
     });
@@ -50,6 +47,13 @@
     onClickRemoveThis(message);
   };
 
+  // Функция удаления всех детей элемента
+  var removeChildren = function (parent) {
+    while (parent.firstChild) {
+      parent.removeChild(parent.firstChild);
+    }
+  };
+
   // Callback функция при успешной загрузке данных
   var onSuccessGet = function (xhr) {
     window.data.objects = xhr.response;
@@ -65,8 +69,14 @@
 
 
   window.data = {
-    consts: {
-      PINS_QUANTITY: PINS_QUANTITY,
+    MAX_PINS: 5,
+
+    KeyCode: {
+      ESC_KEYCODE: ESC_KEYCODE,
+      ENTER_KEYCODE: ENTER_KEYCODE
+    },
+
+    Size: {
       PIN_WIDTH: PIN_WIDTH,
       PIN_HEIGHT: PIN_HEIGHT,
       PIN_MAIN_WIDTH: PIN_MAIN_WIDTH,
@@ -74,12 +84,17 @@
       HEIGHT_MAX: HEIGHT_MAX,
       WIDTH_MAX: WIDTH_MAX,
       CARD_PIC_HEIGHT: CARD_PIC_HEIGHT,
-      CARD_PIC_WIDTH: CARD_PIC_WIDTH,
-      ESC_KEYCODE: ESC_KEYCODE,
-      ENTER_KEYCODE: ENTER_KEYCODE
+      CARD_PIC_WIDTH: CARD_PIC_WIDTH
+    },
+
+    AdPrice: {
+      LOW: 10000,
+      MIDDLE: 50000,
+      HIGH: Infinity
     },
 
     funcs: {
+      removeChildren: removeChildren,
       onEscRemove: onEscRemove,
       onClickRemoveThis: onClickRemoveThis,
       showMessage: showMessage,

@@ -18,13 +18,6 @@
     return element;
   };
 
-  // Функция удаления всех детей элемента
-  var removeChildren = function (parent) {
-    while (parent.firstChild) {
-      parent.removeChild(parent.firstChild);
-    }
-  };
-
   // Функция добавление текстового содержимого элементу родителя
   var addTextContent = function (parent, elementClass, text) {
     var element = parent.querySelector(elementClass);
@@ -34,6 +27,8 @@
   // Функция отрисовки карточки
   // возвращает карточку
   var renderCard = function (templateId, templateClass, dataElement) {
+    var remove = window.data.funcs.removeChildren;
+
     var cardTemplate = document.querySelector(templateId)
       .content
       .querySelector(templateClass);
@@ -55,7 +50,7 @@
     cardType.textContent = cardTypeTranslated[dataElement.offer.type];
 
     var cardFeatures = cardElement.querySelector('.popup__features');
-    removeChildren(cardFeatures);
+    remove(cardFeatures);
     // Добавлять features только если они есть
     if (dataElement.offer.features.length) {
       for (var i = 0; i < dataElement.offer.features.length; i++) {
@@ -70,12 +65,12 @@
     }
 
     var cardPhotos = cardElement.querySelector('.popup__photos');
-    removeChildren(cardPhotos);
+    remove(cardPhotos);
     if (dataElement.offer.photos.length) {
       for (i = 0; i < dataElement.offer.photos.length; i++) {
         var cardPhoto = makeElement('img', 'popup__photo');
-        cardPhoto.width = window.data.consts.CARD_PIC_WIDTH;
-        cardPhoto.height = window.data.consts.CARD_PIC_HEIGHT;
+        cardPhoto.width = window.data.Size.CARD_PIC_WIDTH;
+        cardPhoto.height = window.data.Size.CARD_PIC_HEIGHT;
         cardPhoto.src = dataElement.offer.photos[i];
 
         cardPhotos.appendChild(cardPhoto);

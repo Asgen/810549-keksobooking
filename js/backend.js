@@ -15,7 +15,7 @@
 
     xhr.open(method, url);
 
-    xhr.timeout = 2000;
+    xhr.timeout = 5000;
     xhr.addEventListener('timeout', function () {
       onError(xhr);
     });

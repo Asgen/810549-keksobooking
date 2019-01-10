@@ -29,6 +29,7 @@
   // Кнопка reset
   var adForm = document.querySelector('.ad-form');
   var resetButton = adForm.querySelector('.ad-form__reset');
+  var filtersForm = document.querySelector('.map__filters');
 
   var onResetButtonClick = function (evt) {
     evt.preventDefault();
@@ -52,18 +53,29 @@
       openedCard.remove();
     }
 
-    // Сбрасывает форму и скролит вверх страницы
+    // Сбрасывает формы и скролит вверх страницы
+    filtersForm.reset();
     adForm.reset();
     document.documentElement.scrollTop = 0;
     onRoomSelectClick();
 
     // Ставит метку посередине карты
     pinListo[0].style.top = map.offsetHeight / 2 + 'px';
-    pinListo[0].style.left = (map.offsetWidth / 2) - (window.data.consts.PIN_MAIN_WIDTH / 2) + 'px';
+    pinListo[0].style.left = (map.offsetWidth / 2) - (window.data.Size.PIN_MAIN_WIDTH / 2) + 'px';
     // Прописывает адрес
     var address = document.querySelector('#address');
     address.value = pinListo[0].offsetLeft + ',' + pinListo[0].offsetTop;
+
+    // Ставит изначальную аватарку
+    var preview = document.querySelector('.ad-form-header__preview img');
+    preview.src = 'img/muffin-grey.svg';
+
+    // Удаляет загруженные кртинки
+    var imgBlock = document.querySelector('.ad-form__photo');
+    window.data.funcs.removeChildren(imgBlock);
+
   };
+
   resetButton.addEventListener('click', onResetButtonClick);
 
   // Зависимость минимальной цены от типа
