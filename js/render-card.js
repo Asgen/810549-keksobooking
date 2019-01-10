@@ -27,6 +27,8 @@
   // Функция отрисовки карточки
   // возвращает карточку
   var renderCard = function (templateId, templateClass, dataElement) {
+    var remove = window.data.funcs.removeChildren;
+
     var cardTemplate = document.querySelector(templateId)
       .content
       .querySelector(templateClass);
@@ -48,7 +50,7 @@
     cardType.textContent = cardTypeTranslated[dataElement.offer.type];
 
     var cardFeatures = cardElement.querySelector('.popup__features');
-    window.data.funcs.removeChildren(cardFeatures);
+    remove(cardFeatures);
     // Добавлять features только если они есть
     if (dataElement.offer.features.length) {
       for (var i = 0; i < dataElement.offer.features.length; i++) {
@@ -63,7 +65,7 @@
     }
 
     var cardPhotos = cardElement.querySelector('.popup__photos');
-    window.data.funcs.removeChildren(cardPhotos);
+    remove(cardPhotos);
     if (dataElement.offer.photos.length) {
       for (i = 0; i < dataElement.offer.photos.length; i++) {
         var cardPhoto = makeElement('img', 'popup__photo');
