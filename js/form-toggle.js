@@ -65,7 +65,17 @@
     // Прописывает адрес
     var address = document.querySelector('#address');
     address.value = pinListo[0].offsetLeft + ',' + pinListo[0].offsetTop;
+
+    // Ставит изначальную аватарку
+    var preview = document.querySelector('.ad-form-header__preview img');
+    preview.src = 'img/muffin-grey.svg';
+
+    // Удаляет загруженные кртинки
+    var imgBlock = document.querySelector('.ad-form__photo');
+    window.data.funcs.removeChildren(imgBlock);
+
   };
+
   resetButton.addEventListener('click', onResetButtonClick);
 
   // Зависимость минимальной цены от типа

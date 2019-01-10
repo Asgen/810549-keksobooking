@@ -47,6 +47,13 @@
     onClickRemoveThis(message);
   };
 
+  // Функция удаления всех детей элемента
+  var removeChildren = function (parent) {
+    while (parent.firstChild) {
+      parent.removeChild(parent.firstChild);
+    }
+  };
+
   // Callback функция при успешной загрузке данных
   var onSuccessGet = function (xhr) {
     window.data.objects = xhr.response;
@@ -62,6 +69,8 @@
 
 
   window.data = {
+    MAX_PINS: 5,
+
     KeyCode: {
       ESC_KEYCODE: ESC_KEYCODE,
       ENTER_KEYCODE: ENTER_KEYCODE
@@ -84,19 +93,8 @@
       HIGH: Infinity
     },
 
-    AdRoom: {
-      ONE: 1,
-      TWO: 2,
-      THREE: 3,
-    },
-
-    AdGuest: {
-      ONE: 1,
-      TWO: 2,
-      NONE: 0,
-    },
-
     funcs: {
+      removeChildren: removeChildren,
       onEscRemove: onEscRemove,
       onClickRemoveThis: onClickRemoveThis,
       showMessage: showMessage,

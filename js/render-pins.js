@@ -53,8 +53,8 @@
     }
 
     // Создание метки, только если присутствует свойство offer
-    if (dataArr.length > 5) {
-      dataArr = dataArr.slice(0, 5);
+    if (dataArr.length > window.data.MAX_PINS) {
+      dataArr = dataArr.slice(0, window.data.MAX_PINS);
     }
 
     for (i = 0; i < dataArr.length; i++) {

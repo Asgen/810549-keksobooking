@@ -13,26 +13,27 @@
     var typeRs = type.value === 'any' || type.value === it.offer.type;
 
     // Цена
+    var priceAd = window.data.AdPrice;
     var priceRs;
     switch (price.value) {
       case 'low':
-        priceRs = it.offer.price >= 0 && it.offer.price < window.data.AdPrice.LOW;
+        priceRs = it.offer.price >= 0 && it.offer.price < priceAd.LOW;
         break;
       case 'middle':
-        priceRs = it.offer.price >= window.data.AdPrice.LOW && it.offer.price < window.data.AdPrice.MIDDLE;
+        priceRs = it.offer.price >= priceAd.LOW && it.offer.price < priceAd.MIDDLE;
         break;
       case 'high':
-        priceRs = it.offer.price >= window.data.AdPrice.MIDDLE && it.offer.price < window.data.AdPrice.HIGH;
+        priceRs = it.offer.price >= priceAd.MIDDLE && it.offer.price < priceAd.HIGH;
         break;
       case 'any':
-        priceRs = it.offer.price >= 0 && it.offer.price < window.data.AdPrice.HIGH;
+        priceRs = it.offer.price >= 0 && it.offer.price < priceAd.HIGH;
         break;
     }
 
     // Комнаты
     var roomsRs = true;
     if (rooms.value !== 'any') {
-      roomsRs = String(it.offer.rooms) === rooms.value;
+      roomsRs = it.offer.rooms === Number(rooms.value);
     }
 
     // Гости

@@ -18,13 +18,6 @@
     return element;
   };
 
-  // Функция удаления всех детей элемента
-  var removeChildren = function (parent) {
-    while (parent.firstChild) {
-      parent.removeChild(parent.firstChild);
-    }
-  };
-
   // Функция добавление текстового содержимого элементу родителя
   var addTextContent = function (parent, elementClass, text) {
     var element = parent.querySelector(elementClass);
@@ -55,7 +48,7 @@
     cardType.textContent = cardTypeTranslated[dataElement.offer.type];
 
     var cardFeatures = cardElement.querySelector('.popup__features');
-    removeChildren(cardFeatures);
+    window.data.funcs.removeChildren(cardFeatures);
     // Добавлять features только если они есть
     if (dataElement.offer.features.length) {
       for (var i = 0; i < dataElement.offer.features.length; i++) {
@@ -70,7 +63,7 @@
     }
 
     var cardPhotos = cardElement.querySelector('.popup__photos');
-    removeChildren(cardPhotos);
+    window.data.funcs.removeChildren(cardPhotos);
     if (dataElement.offer.photos.length) {
       for (i = 0; i < dataElement.offer.photos.length; i++) {
         var cardPhoto = makeElement('img', 'popup__photo');

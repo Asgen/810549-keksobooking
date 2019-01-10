@@ -21,6 +21,9 @@
     var dragged = false;
 
     var onMouseMove = function (moveEvt) {
+
+      var position = window.data.Size;
+
       moveEvt.preventDefault();
       dragged = true;
 
@@ -44,16 +47,16 @@
       var mainPinPositionX = positionX;
 
       // Позиции метки в крайних точках
-      if (mainPinPositionY < window.data.Size.HEIGHT_MIN - window.data.Size.PIN_HEIGHT) {
-        mainPinPositionY = window.data.Size.HEIGHT_MIN - window.data.Size.PIN_HEIGHT;
-      } else if (mainPinPositionY > window.data.Size.HEIGHT_MAX - window.data.Size.PIN_HEIGHT) {
-        mainPinPositionY = window.data.Size.HEIGHT_MAX - window.data.Size.PIN_HEIGHT;
+      if (mainPinPositionY < position.HEIGHT_MIN - position.PIN_HEIGHT) {
+        mainPinPositionY = position.HEIGHT_MIN - position.PIN_HEIGHT;
+      } else if (mainPinPositionY > position.HEIGHT_MAX - position.PIN_HEIGHT) {
+        mainPinPositionY = position.HEIGHT_MAX - position.PIN_HEIGHT;
       }
       while (mainPinPositionX < 0) {
         mainPinPositionX = 0;
       }
-      while (mainPinPositionX > window.data.Size.WIDTH_MAX - window.data.Size.PIN_MAIN_WIDTH) {
-        mainPinPositionX = window.data.Size.WIDTH_MAX - window.data.Size.PIN_MAIN_WIDTH;
+      while (mainPinPositionX > position.WIDTH_MAX - position.PIN_MAIN_WIDTH) {
+        mainPinPositionX = position.WIDTH_MAX - position.PIN_MAIN_WIDTH;
       }
 
       // Задает позицию метки
@@ -62,7 +65,7 @@
 
       // Устанавливает адрес во время перетаскивания
       var addressX = mainPinPositionX;
-      var addressY = mainPinPositionY + window.data.Size.PIN_HEIGHT;
+      var addressY = mainPinPositionY + position.PIN_HEIGHT;
       address.value = addressX + ',' + addressY;
     };
 
