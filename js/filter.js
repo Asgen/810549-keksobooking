@@ -6,6 +6,7 @@
   var rooms = filtersForm.querySelector('#housing-rooms');
   var guests = filtersForm.querySelector('#housing-guests');
   var features = filtersForm.querySelector('#housing-features');
+  var debounce = window.funcs.debounce;
 
   // Функция проверяет входящий объект по всем условиям и возвращает true при успехе
   var filterIt = function (it) {
@@ -57,19 +58,17 @@
 
   };
 
-  // Callback при изменеии фильров формы с задержкой в полсек.
-  var lastTimeout;
+  // Callback при изменеии фильров формы
   var onFilterChange = function () {
-    var newArr = window.data.objects.filter(function (it) {
+    var arr = window.data.objects;
+    var func = window.renderPins;
+
+    var newArr = arr.filter(function (it) {
       return filterIt(it);
     });
-    if (lastTimeout) {
-      window.clearTimeout(lastTimeout);
-    }
-    lastTimeout = window.setTimeout(function () {
-      window.renderPins(newArr, '.map__pins', '#pin', '.map__pin');
-    }, 500);
+
+    func(newArr, '.map__pins', '#pin', '.map__pin');
   };
 
-  filtersForm.addEventListener('change', onFilterChange);
+  filtersForm.addEventListener('change', debounce(onFilterChange, 500));
 })();

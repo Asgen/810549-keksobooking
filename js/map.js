@@ -72,23 +72,26 @@
     var onMouseUp = function (upEvt) {
       upEvt.preventDefault();
 
+      var func = window.funcs;
+      var disableForms = window.formToggle.toggle;
+
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
 
       // Если было перетаскивание
       if (dragged) {
-        var pinList = document.querySelectorAll('.map__pin');
+        var data = window.data.objects;
 
         // Если меток на карте нет, то
-        if (pinList.length < 2) {
+        if (!data) {
           // Скачивает данные и при успехе вызывает onSuccessGet, которая отрисовывает метки
-          window.xhrRequest('https://js.dump.academy/keksobooking/data', 'GET', window.data.funcs.onSuccessGet, window.data.funcs.onError);
+          window.xhrRequest('https://js.dump.academy/keksobooking/data', 'GET', func.onSuccessGet, func.onError);
           // Удаляет класс карты
           document.querySelector('.map').classList.remove('map--faded');
           // Удаляет класс формы
           document.querySelector('.ad-form').classList.remove('ad-form--disabled');
           // Активирует формы
-          window.formToggle.toggle(false);
+          disableForms(false);
         }
       }
     };
