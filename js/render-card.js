@@ -1,33 +1,14 @@
 'use strict';
 (function () {
-  // Мапа для типа жилья отрисованной карточки
-  var cardTypeTranslated = {
-    'palace': 'Дворец',
-    'flat': 'Квартира',
-    'house': 'Дом',
-    'bungalo': 'Бунгало'
-  };
-
-  // Функция создания элемента
-  var makeElement = function (tagName, className, text) {
-    var element = document.createElement(tagName);
-    element.classList.add(className);
-    if (text) {
-      element.textContent = text;
-    }
-    return element;
-  };
-
-  // Функция добавление текстового содержимого элементу родителя
-  var addTextContent = function (parent, elementClass, text) {
-    var element = parent.querySelector(elementClass);
-    element.textContent = text;
-  };
-
   // Функция отрисовки карточки
   // возвращает карточку
   var renderCard = function (templateId, templateClass, dataElement) {
-    var remove = window.data.funcs.removeChildren;
+    var remove = window.funcs.removeChildren;
+    var size = window.data.Size;
+    var makeElement = window.funcs.makeElement;
+    var addTextContent = window.funcs.addTextContent;
+    var cardTypeMap = window.data.cardTypeMap;
+    var onEscRemove = window.funcs.onEscRemove;
 
     var cardTemplate = document.querySelector(templateId)
       .content
@@ -47,7 +28,7 @@
     }
 
     var cardType = cardElement.querySelector('.popup__type');
-    cardType.textContent = cardTypeTranslated[dataElement.offer.type];
+    cardType.textContent = cardTypeMap[dataElement.offer.type];
 
     var cardFeatures = cardElement.querySelector('.popup__features');
     remove(cardFeatures);
@@ -69,8 +50,8 @@
     if (dataElement.offer.photos.length) {
       for (i = 0; i < dataElement.offer.photos.length; i++) {
         var cardPhoto = makeElement('img', 'popup__photo');
-        cardPhoto.width = window.data.Size.CARD_PIC_WIDTH;
-        cardPhoto.height = window.data.Size.CARD_PIC_HEIGHT;
+        cardPhoto.width = size.CARD_PIC_WIDTH;
+        cardPhoto.height = size.CARD_PIC_HEIGHT;
         cardPhoto.src = dataElement.offer.photos[i];
 
         cardPhotos.appendChild(cardPhoto);
@@ -88,7 +69,7 @@
       cardElement.remove();
     });
     // Закрытие на Esc
-    window.data.funcs.onEscRemove(cardElement);
+    onEscRemove(cardElement);
 
     return cardElement;
   };

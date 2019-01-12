@@ -1,5 +1,7 @@
 'use strict';
 (function () {
+  var funcs = window.funcs;
+
   // Функция активации/деактивации полей ввода
   // принимает true или false
   var makeAllFormsDisable = function (status) {
@@ -34,6 +36,9 @@
   var onResetButtonClick = function (evt) {
     evt.preventDefault();
 
+    var pinMainWidth = window.data.Size.PIN_MAIN_WIDTH;
+    var removeChildren = window.funcs.removeChildren;
+
     // Блокирует карту
     var map = document.querySelector('.map');
     map.classList.add('map--faded');
@@ -43,9 +48,9 @@
     // Блокирует поля
     makeAllFormsDisable(true);
     // Удаляет все отрисованные метки
-    var pinListo = document.querySelectorAll('.map__pin');
-    for (var i = 1; i < pinListo.length; i++) {
-      pinListo[i].remove();
+    var pinList = document.querySelectorAll('.map__pin');
+    for (var i = 1; i < pinList.length; i++) {
+      pinList[i].remove();
     }
     // Удаляет карточку, если открыта
     var openedCard = document.querySelector('.map__card');
@@ -60,11 +65,11 @@
     onRoomSelectClick();
 
     // Ставит метку посередине карты
-    pinListo[0].style.top = map.offsetHeight / 2 + 'px';
-    pinListo[0].style.left = (map.offsetWidth / 2) - (window.data.Size.PIN_MAIN_WIDTH / 2) + 'px';
+    pinList[0].style.top = map.offsetHeight / 2 + 'px';
+    pinList[0].style.left = (map.offsetWidth / 2) - (pinMainWidth / 2) + 'px';
     // Прописывает адрес
     var address = document.querySelector('#address');
-    address.value = pinListo[0].offsetLeft + ',' + pinListo[0].offsetTop;
+    address.value = pinList[0].offsetLeft + ',' + pinList[0].offsetTop;
 
     // Ставит изначальную аватарку
     var preview = document.querySelector('.ad-form-header__preview img');
@@ -72,7 +77,7 @@
 
     // Удаляет загруженные кртинки
     var imgBlock = document.querySelector('.ad-form__photo');
-    window.data.funcs.removeChildren(imgBlock);
+    removeChildren(imgBlock);
 
   };
 
@@ -130,17 +135,16 @@
 
   // Callback при успешной отправке
   var onSuccessSend = function (xhr, evt) {
-  // Переход в неактивное состояние при успешной отправке
+    // Переход в неактивное состояние при успешной отправке
     onResetButtonClick(evt);
     // Показывает сообщение об успешной отправке (логика закрытия внутри)
-    window.data.funcs.showMessage('#success', '.success', 'main');
+    funcs.showMessage('#success', '.success', 'main');
   };
 
   adForm.addEventListener('submit', function (evt) {
-    window.xhrRequest('https://js.dump.academy/keksobooking', 'POST', onSuccessSend, window.data.funcs.onError, new FormData(adForm));
+    window.xhrRequest('https://js.dump.academy/keksobooking', 'POST', onSuccessSend, funcs.onError, new FormData(adForm));
     evt.preventDefault();
   });
-
 
   window.formToggle = {
     toggle: makeAllFormsDisable,

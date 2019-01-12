@@ -1,5 +1,13 @@
 'use strict';
 (function () {
+  // Максимальное количество меток на карте
+  var MAX_PINS = 5;
+
+  // Ценники объявлений
+  var LOW = 10000;
+  var MIDDLE = 50000;
+  var HIGH = Infinity;
+
   // Размеры Метки
   var PIN_WIDTH = 50;
   var PIN_HEIGHT = 70;
@@ -18,58 +26,8 @@
   var ESC_KEYCODE = 27;
   var ENTER_KEYCODE = 13;
 
-  // Функция удаления элемента по нажатию на Esc
-  var onEscRemove = function (element) {
-    document.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === window.data.KeyCode.ESC_KEYCODE) {
-        element.remove();
-      }
-    });
-  };
-
-  // Функция удаления элемента по клику
-  var onClickRemoveThis = function (element) {
-    element.addEventListener('click', function () {
-      element.remove();
-    });
-  };
-
-  // Функция отрисовки сообщения из шаблона
-  var showMessage = function (templateId, templateElement, target) {
-    var container = document.querySelector(target);
-    var messageTemplate = document.querySelector(templateId)
-      .content
-      .querySelector(templateElement);
-    var message = messageTemplate.cloneNode(true);
-    container.appendChild(message);
-
-    onEscRemove(message);
-    onClickRemoveThis(message);
-  };
-
-  // Функция удаления всех детей элемента
-  var removeChildren = function (parent) {
-    while (parent.firstChild) {
-      parent.removeChild(parent.firstChild);
-    }
-  };
-
-  // Callback функция при успешной загрузке данных
-  var onSuccessGet = function (xhr) {
-    window.data.objects = xhr.response;
-    // Отрисовка Меток на карте
-    window.renderPins(window.data.objects, '.map__pins', '#pin', '.map__pin');
-  };
-
-  // Callback функция при ошибке загрузки данных
-  var onError = function () {
-    // Показывает сообщение об ошибке отправки (логика закрытия внутри)
-    window.data.funcs.showMessage('#error', '.error', 'main');
-  };
-
-
   window.data = {
-    MAX_PINS: 5,
+    MAX_PINS: MAX_PINS,
 
     KeyCode: {
       ESC_KEYCODE: ESC_KEYCODE,
@@ -88,18 +46,17 @@
     },
 
     AdPrice: {
-      LOW: 10000,
-      MIDDLE: 50000,
-      HIGH: Infinity
+      LOW: LOW,
+      MIDDLE: MIDDLE,
+      HIGH: HIGH
     },
 
-    funcs: {
-      removeChildren: removeChildren,
-      onEscRemove: onEscRemove,
-      onClickRemoveThis: onClickRemoveThis,
-      showMessage: showMessage,
-      onSuccessGet: onSuccessGet,
-      onError: onError
+    // Мапа для типа жилья отрисованной карточки
+    cardTypeMap: {
+      'palace': 'Дворец',
+      'flat': 'Квартира',
+      'house': 'Дом',
+      'bungalo': 'Бунгало'
     }
   };
 })();

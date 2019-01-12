@@ -767,6 +767,7 @@ fieldset {
   display: -ms-flexbox;
   display: flex;
   margin-right: 10px;
+  margin-bottom: 10px;
 
   width: 150px;
   min-height: 70px;
@@ -808,12 +809,15 @@ fieldset {
 .ad-form__photo {
   margin-right: 10px;
   margin-bottom: 10px;
+  padding: 10px;
 
-  width: 70px;
-  height: 70px;
+  min-width: 70px;
+  min-height: 70px;
 
   background-color: #e4e4de;
   border-radius: 5px;
+
+  text-align: center;
 }
 
 .ad-form__element--submit {
