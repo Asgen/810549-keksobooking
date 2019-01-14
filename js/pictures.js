@@ -4,6 +4,7 @@
 
   var fileChooser = document.querySelector('#images');
   var imgBlock = document.querySelector('.ad-form__photo');
+  var size = window.data.Size.CARD_PIC_WIDTH;
 
   fileChooser.addEventListener('change', function () {
     var files = fileChooser.files;
@@ -23,8 +24,8 @@
 
             var picture = document.createElement('img');
             picture.src = e.target.result;
-            picture.width = 50;
-            picture.height = 50;
+            picture.width = size;
+            picture.height = picture.width;
             picture.style.marginRight = '3px';
 
             imgBlock.appendChild(picture);

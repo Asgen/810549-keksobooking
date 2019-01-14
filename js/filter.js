@@ -8,12 +8,14 @@
   var features = filtersForm.querySelector('#housing-features');
   var debounce = window.funcs.debounce;
 
-  // Функция проверяет входящий объект по всем условиям и возвращает true при успехе
-  var filterIt = function (it) {
-    // Тип
+  // Фильтрация по типу жилья
+  var typeFilter = function (it) {
     var typeRs = type.value === 'any' || type.value === it.offer.type;
+    return typeRs;
+  };
 
-    // Цена
+  // Фильтрация по цене
+  var priceFilter = function (it) {
     var priceAd = window.data.AdPrice;
     var priceRs;
     switch (price.value) {
@@ -30,20 +32,29 @@
         priceRs = it.offer.price >= 0 && it.offer.price < priceAd.HIGH;
         break;
     }
+    return priceRs;
+  };
 
-    // Комнаты
+  // Фильтрация по кол-ву комнат
+  var roomsFilter = function (it) {
     var roomsRs = true;
     if (rooms.value !== 'any') {
       roomsRs = it.offer.rooms === Number(rooms.value);
     }
+    return roomsRs;
+  };
 
-    // Гости
+  // Фильтрация по кол-ву гостей
+  var guestsFilter = function (it) {
     var guestsRs = true;
     if (guests.value !== 'any') {
       guestsRs = it.offer.guests === Number(guests.value);
     }
+    return guestsRs;
+  };
 
-    // Опции
+  // Фильтрация по выбранным опциям
+  var featuresFilter = function (it) {
     var featuresRs = true;
     var adFeaturesList = it.offer.features;
     var checkedFeatures = features.querySelectorAll('input[type="checkbox"]:checked');
@@ -51,11 +62,10 @@
     for (var i = 0; i < checkedFeatures.length; i++) {
       if (adFeaturesList.indexOf(checkedFeatures[i].value) === -1) {
         featuresRs = false;
+        break;
       }
     }
-
-    return typeRs && priceRs && roomsRs && guestsRs && featuresRs;
-
+    return featuresRs;
   };
 
   // Callback при изменеии фильров формы
@@ -64,11 +74,12 @@
     var func = window.renderPins;
 
     var newArr = arr.filter(function (it) {
-      return filterIt(it);
+      return typeFilter(it) && priceFilter(it) && roomsFilter(it) && guestsFilter(it) && featuresFilter(it);
     });
 
     func(newArr, '.map__pins', '#pin', '.map__pin');
   };
+
 
   filtersForm.addEventListener('change', debounce(onFilterChange, 500));
 })();

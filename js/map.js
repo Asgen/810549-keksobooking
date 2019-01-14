@@ -82,17 +82,21 @@
       if (dragged) {
         var data = window.data.objects;
 
-        // Если меток на карте нет, то
+        // При первом взаимодействии с сайтом, пока данные еще не загружены
         if (!data) {
           // Скачивает данные и при успехе вызывает onSuccessGet, которая отрисовывает метки
           window.xhrRequest('https://js.dump.academy/keksobooking/data', 'GET', func.onSuccessGet, func.onError);
-          // Удаляет класс карты
-          document.querySelector('.map').classList.remove('map--faded');
-          // Удаляет класс формы
-          document.querySelector('.ad-form').classList.remove('ad-form--disabled');
-          // Активирует формы
-          disableForms(false);
+        } else {
+          // Если данные уже загружены
+          window.renderPins(data, '.map__pins', '#pin', '.map__pin');
         }
+
+        // Удаляет класс карты
+        document.querySelector('.map').classList.remove('map--faded');
+        // Удаляет класс формы
+        document.querySelector('.ad-form').classList.remove('ad-form--disabled');
+        // Активирует формы
+        disableForms(false);
       }
     };
 

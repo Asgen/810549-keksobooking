@@ -1,15 +1,51 @@
 'use strict';
 (function () {
+  var remove = window.funcs.removeChildren;
+  var makeElement = window.funcs.makeElement;
+  var addTextContent = window.funcs.addTextContent;
+  var onEscRemove = window.funcs.onEscRemove;
+  var size = window.data.Size;
+
+  // Функция добавления описания объявления (если есть)
+  var addFeatures = function (cardElement, dataElement) {
+    var cardFeatures = cardElement.querySelector('.popup__features');
+    remove(cardFeatures);
+    // Добавлять features только если они есть
+    if (dataElement.offer.features.length) {
+      for (var i = 0; i < dataElement.offer.features.length; i++) {
+        var cardFeature = makeElement('li', 'popup__feature');
+        var cardFeatureMod = 'popup__feature--' + dataElement.offer.features[i];
+        cardFeature.classList.add(cardFeatureMod);
+
+        cardFeatures.appendChild(cardFeature);
+      }
+    } else {
+      cardFeatures.remove();
+    }
+  };
+
+  // Функция отрусовки фоток в карточке объявления
+  var addPhotos = function (cardElement, dataElement) {
+    var cardPhotos = cardElement.querySelector('.popup__photos');
+    remove(cardPhotos);
+    if (dataElement.offer.photos.length) {
+      for (var i = 0; i < dataElement.offer.photos.length; i++) {
+        var cardPhoto = makeElement('img', 'popup__photo');
+        cardPhoto.width = size.CARD_PIC_WIDTH;
+        cardPhoto.height = size.CARD_PIC_HEIGHT;
+        cardPhoto.src = dataElement.offer.photos[i];
+
+        cardPhotos.appendChild(cardPhoto);
+      }
+    } else {
+      cardPhotos.remove();
+    }
+  };
+
   // Функция отрисовки карточки
   // возвращает карточку
   var renderCard = function (templateId, templateClass, dataElement) {
-    var remove = window.funcs.removeChildren;
-    var size = window.data.Size;
-    var makeElement = window.funcs.makeElement;
-    var addTextContent = window.funcs.addTextContent;
     var cardTypeMap = window.data.cardTypeMap;
-    var onEscRemove = window.funcs.onEscRemove;
-
     var cardTemplate = document.querySelector(templateId)
       .content
       .querySelector(templateClass);
@@ -30,35 +66,8 @@
     var cardType = cardElement.querySelector('.popup__type');
     cardType.textContent = cardTypeMap[dataElement.offer.type];
 
-    var cardFeatures = cardElement.querySelector('.popup__features');
-    remove(cardFeatures);
-    // Добавлять features только если они есть
-    if (dataElement.offer.features.length) {
-      for (var i = 0; i < dataElement.offer.features.length; i++) {
-        var cardFeature = makeElement('li', 'popup__feature');
-        var cardFeatureMod = 'popup__feature--' + dataElement.offer.features[i];
-        cardFeature.classList.add(cardFeatureMod);
-
-        cardFeatures.appendChild(cardFeature);
-      }
-    } else {
-      cardFeatures.remove();
-    }
-
-    var cardPhotos = cardElement.querySelector('.popup__photos');
-    remove(cardPhotos);
-    if (dataElement.offer.photos.length) {
-      for (i = 0; i < dataElement.offer.photos.length; i++) {
-        var cardPhoto = makeElement('img', 'popup__photo');
-        cardPhoto.width = size.CARD_PIC_WIDTH;
-        cardPhoto.height = size.CARD_PIC_HEIGHT;
-        cardPhoto.src = dataElement.offer.photos[i];
-
-        cardPhotos.appendChild(cardPhoto);
-      }
-    } else {
-      cardPhotos.remove();
-    }
+    addFeatures(cardElement, dataElement);
+    addPhotos(cardElement, dataElement);
 
     var cardAvatar = cardElement.querySelector('.popup__avatar');
     cardAvatar.src = dataElement.author.avatar;
