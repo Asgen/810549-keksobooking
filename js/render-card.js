@@ -12,13 +12,13 @@
     remove(cardFeatures);
     // Добавлять features только если они есть
     if (dataElement.offer.features.length) {
-      for (var i = 0; i < dataElement.offer.features.length; i++) {
+      dataElement.offer.features.forEach(function (element) {
         var cardFeature = makeElement('li', 'popup__feature');
-        var cardFeatureMod = 'popup__feature--' + dataElement.offer.features[i];
+        var cardFeatureMod = 'popup__feature--' + element;
         cardFeature.classList.add(cardFeatureMod);
 
         cardFeatures.appendChild(cardFeature);
-      }
+      });
     } else {
       cardFeatures.remove();
     }
@@ -29,14 +29,14 @@
     var cardPhotos = cardElement.querySelector('.popup__photos');
     remove(cardPhotos);
     if (dataElement.offer.photos.length) {
-      for (var i = 0; i < dataElement.offer.photos.length; i++) {
+      dataElement.offer.photos.forEach(function (element) {
         var cardPhoto = makeElement('img', 'popup__photo');
         cardPhoto.width = size.CARD_PIC_WIDTH;
         cardPhoto.height = size.CARD_PIC_HEIGHT;
-        cardPhoto.src = dataElement.offer.photos[i];
+        cardPhoto.src = element;
 
         cardPhotos.appendChild(cardPhoto);
-      }
+      });
     } else {
       cardPhotos.remove();
     }

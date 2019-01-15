@@ -22,9 +22,9 @@
     var selects = document.querySelectorAll('.map__filters select');
 
     var disableIt = function (arr, statusx) {
-      for (var i = 0; i < arr.length; i++) {
-        arr[i].disabled = statusx;
-      }
+      arr.forEach(function (element) {
+        element.disabled = statusx;
+      });
     };
     disableIt(fieldsets, status);
     disableIt(selects, status);

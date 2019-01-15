@@ -59,12 +59,11 @@
     var adFeaturesList = it.offer.features;
     var checkedFeatures = features.querySelectorAll('input[type="checkbox"]:checked');
 
-    for (var i = 0; i < checkedFeatures.length; i++) {
-      if (adFeaturesList.indexOf(checkedFeatures[i].value) === -1) {
+    checkedFeatures.forEach(function (element) {
+      if (adFeaturesList.indexOf(element.value) === -1) {
         featuresRs = false;
-        break;
       }
-    }
+    });
     return featuresRs;
   };
 
