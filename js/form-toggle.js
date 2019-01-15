@@ -35,9 +35,9 @@
   // Функция удаления всех меток кроме главной
   var removePins = function () {
     var pinList = document.querySelectorAll('.map__pin:not(.map__pin--main)');
-    for (var i = 0; i < pinList.length; i++) {
-      pinList[i].remove();
-    }
+    pinList.forEach(function (element) {
+      element.remove();
+    });
   };
 
   // Функция удаляет карточку, если открыта
@@ -136,11 +136,11 @@
     for (i = 0; i < guestsSelect.length; i++) {
       guestsSelect.options[i].disabled = false;
 
-      if (i + 1 > Number(roomSelect.value)) {
+      if (i >= Number(roomSelect.value)) {
         guestsSelect.options[i].disabled = true;
       }
 
-      if (roomSelect.value === '100') {
+      if (roomSelect.value === window.data.MAX_ROOMS) {
         guestsSelect.options[i].disabled = true;
         guestsSelect.querySelector('option[value="0"]').disabled = false;
       }

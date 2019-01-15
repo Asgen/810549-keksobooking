@@ -3,6 +3,9 @@
   // Максимальное количество меток на карте
   var MAX_PINS = 5;
 
+  // Самое большое количество комнат
+  var MAX_ROOMS = '100';
+
   // Ценники объявлений
   var LOW = 10000;
   var MIDDLE = 50000;
@@ -28,6 +31,7 @@
 
   window.data = {
     MAX_PINS: MAX_PINS,
+    MAX_ROOMS: MAX_ROOMS,
 
     KeyCode: {
       ESC_KEYCODE: ESC_KEYCODE,
