@@ -6,6 +6,9 @@
   // Самое большое количество комнат
   var MAX_ROOMS = '100';
 
+  // Количество гостей для MAX_ROOMS
+  var GUESTS_FOR_MAX_ROOMS = 0;
+
   // Ценники объявлений
   var LOW = 10000;
   var MIDDLE = 50000;
@@ -32,6 +35,7 @@
   window.data = {
     MAX_PINS: MAX_PINS,
     MAX_ROOMS: MAX_ROOMS,
+    GUESTS_FOR_MAX_ROOMS: GUESTS_FOR_MAX_ROOMS,
 
     KeyCode: {
       ESC_KEYCODE: ESC_KEYCODE,

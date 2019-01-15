@@ -132,6 +132,8 @@
   }
 
   var onRoomSelectChange = function () {
+    var specialOption = 'option[value="' + window.data.GUESTS_FOR_MAX_ROOMS + '"]';
+
     // Количество комнат прямопропорционально количеству гостей
     for (i = 0; i < guestsSelect.length; i++) {
       guestsSelect.options[i].disabled = false;
@@ -142,7 +144,7 @@
 
       if (roomSelect.value === window.data.MAX_ROOMS) {
         guestsSelect.options[i].disabled = true;
-        guestsSelect.querySelector('option[value="0"]').disabled = false;
+        guestsSelect.querySelector(specialOption).disabled = false;
       }
 
       // Проверка на соответствие количества гостей количеству комнат
